@@ -1,0 +1,9 @@
+application: loki-distributed
+clusterConfig:
+  namespace: monitoring
+chart:
+  name: loki-distributed
+  releaseName: loki
+  repoURL: https://grafana.github.io/helm-charts
+  targetRevision: 0.80.0
+  values: |

@@ -1,0 +1,29 @@
+application: kube-prometheus-stack
+clusterConfig:
+  namespace: monitoring
+chart:
+  name: kube-prometheus-stack
+  releaseName: kube-prometheus-stack
+  repoURL: https://prometheus-community.github.io/helm-charts
+  targetRevision: 68.2.1
+  values: |
+    serviceAccount:
+      name: prometheus-sa
+      annotations:
+        eks.amazonaws.com/role-arn: arn:aws:iam::345594590281:role/prom-role
+
+    prometheus:
+      prometheusSpec:
+        serviceAccountName: prometheus-sa
+        serviceMonitorSelectorNilUsesHelmValues: false
+        serviceMonitorSelector: {}
+        serviceMonitorNamespaceSelector: {}
+
+    grafana:
+      sidecar:
+        datasources:
+          defaultDatasourceEnabled: true
+      additionalDataSources:
+        - name: Loki
+          type: loki
+          url: url: http://loki-loki-distributed-query-frontend.monitoring:3100

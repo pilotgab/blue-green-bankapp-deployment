@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: monitoring-applications
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: "https://github.com/pilotgab/bankapp-blue-green-deployment.git"
+        directory:
+          path: appset/monitoring
+        revision: main
+  template:
+    metadata:
+      name: "{{ .application }}"
+    spec:
+      project: default
+      source:
+        chart: "{{ .chart.name }}"
+        targetRevision: "{{ .chart.targetRevision }}"
+        repoURL: "{{ .chart.repoURL }}"
+        helm:
+          releaseName: "{{ .chart.releaseName }}"
+          values: |-
+            {{ .chart.values }}
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{ .clusterConfig.namespace }}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
