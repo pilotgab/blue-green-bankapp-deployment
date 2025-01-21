@@ -20,24 +20,7 @@ chart:
         serviceMonitorSelectorNilUsesHelmValues: false
         serviceMonitorSelector: {}
         serviceMonitorNamespaceSelector: {}
-        externalLabels:
-          geo: us
-          region: east
-          cluster: deel-test
-        thanos:
-          tag: v0.37.2
-          objectStorageConfig:
-            type: S3
-            config:
-              bucket: prometheus-bucket
-              endpoint: s3.us-east-1.amazonaws.com
-              access_key:
-                name: s3-credentials
-                key: access_key
-              secret_key:
-                name: s3-credentials
-                key: secret_key
-              insecure: false
+
 
     grafana:
       sidecar:

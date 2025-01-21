@@ -1,0 +1,145 @@
+application: traefik
+clusterConfig:
+  namespace: traefik
+chart:
+  name: traefik
+  releaseName: traefik
+  repoURL: https://traefik.github.io/charts
+  targetRevision: "v34.1.0"
+  values: |
+    image:
+      repository: traefik
+      tag: "v34.1.0"
+      pullPolicy: IfNotPresent
+
+    ports:
+      web:
+        redirections:
+          entryPoint:
+            to: websecure
+            scheme: https
+            permanent: true
+
+   # ingressRoute:
+   #   dashboard:
+   #     enabled: false
+   #     entryPoints:
+   #       - websecure
+   #     matchRule: Host(`dashboard.<your-domain>`)  # Replace with #your dashboard domain
+   #     middlewares:
+   #       - name: auth-middleware  # Replace with your authentication middleware, if needed
+   #     tls:
+    #      secretName: dashboard-tls  # Replace with your TLS secret name
+
+    # ACME Let's Encrypt configuration with Cloudflare DNS challenge
+    providers:
+      tls:
+        certificatesResolvers:
+          letsencrypt:
+            acme:
+              email: gabidachaba@gmail.com
+              storage: /data/acme.json
+              dnsChallenge:
+                provider: cloudflare
+                delayBeforeCheck: 0
+                resolvers:
+                  - 1.1.1.1:53
+
+    env:
+      - name: CF_API_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: cloudflare-api-token-secret
+            key: apiToken
+
+    # Log configuration
+    #logs:
+     # general:
+      #  level: INFO
+      #access:
+       # enabled: true
+
+
+
+ externalLabels:
+          geo: us
+          region: east
+          cluster: deel-test
+        thanos:
+          tag: v0.37.2
+          objectStorageConfig:
+            type: S3
+            config:
+              bucket: prometheus-bucket
+              endpoint: s3.us-east-1.amazonaws.com
+              access_key:
+                name: s3-credentials
+                key: access_key
+              secret_key:
+                name: s3-credentials
+                key: secret_key
+              insecure: false
+
+
+
+server:
+        http_listen_port: 3101
+      positions:
+        filename: /run/promtail/positions.yaml # File to track log positions for resumable ingestion
+      clients:
+        - url: http://loki-loki-distributed-gateway/loki/api/v1/push
+      scrape_configs:
+        - job_name: kubernetes-pods
+          kubernetes_sd_configs:
+            - role: pod
+          pipeline_stages:
+            - match:
+                selector: '{app=~".+"}'
+                stages:
+                  - docker: {}
+                  - json:
+                      expressions:
+                        level: level
+                        msg: message
+                  - timestamp:
+                      source: timestamp
+                      format: RFC3339
+                  - labels:
+                      level: level
+                      pod_name: pod
+          relabel_configs:
+            - source_labels: [__meta_kubernetes_namespace]
+              target_label: namespace
+            - source_labels: [__meta_kubernetes_pod_name]
+              target_label: pod
+            - source_labels: [__meta_kubernetes_pod_container_name]
+              target_label: container
+            - source_labels: [__meta_kubernetes_pod_label_app]
+              target_label: app
+            - source_labels: [__meta_kubernetes_node_name]
+              target_label: node
+        - job_name: kubernetes-system-logs
+          kubernetes_sd_configs:
+            - role: pod
+          pipeline_stages:
+            - match:
+                selector: '{namespace="kube-system"}'
+                stages:
+                  - docker: {}
+                  - json:
+                      expressions:
+                        level: level
+                        msg: message
+                  - timestamp:
+                      source: timestamp
+                      format: RFC3339
+          relabel_configs:
+            - source_labels: [__meta_kubernetes_namespace]
+              regex: kube-system
+              action: keep
+            - source_labels: [__meta_kubernetes_pod_name]
+              target_label: pod
+            - source_labels: [__meta_kubernetes_pod_label_app]
+              target_label: app
+            - source_labels: [__meta_kubernetes_node_name]
+              target_label: node
