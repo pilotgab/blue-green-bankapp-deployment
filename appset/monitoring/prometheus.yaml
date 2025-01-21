@@ -5,7 +5,7 @@ chart:
   name: kube-prometheus-stack
   releaseName: kube-prometheus-stack
   repoURL: https://prometheus-community.github.io/helm-charts
-  targetRevision: 68.2.1
+  targetRevision: 68.3.0
   values: |
     serviceAccount:
       name: prometheus-sa
