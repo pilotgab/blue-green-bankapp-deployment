@@ -6,7 +6,7 @@ chart:
   name: kube-prometheus-stack
   releaseName: kube-prometheus-stack
   repoURL: https://prometheus-community.github.io/helm-charts
-  targetRevision: 68.2.1
+  targetRevision: 68.3.0
   values: |
     serviceAccount:
       name: prometheus-sa
@@ -20,6 +20,24 @@ chart:
         serviceMonitorSelectorNilUsesHelmValues: false
         serviceMonitorSelector: {}
         serviceMonitorNamespaceSelector: {}
+        externalLabels:
+          geo: us
+          region: east
+          cluster: deel-test
+        thanos:
+          tag: v0.37.2
+          objectStorageConfig:
+            type: S3
+            config:
+              bucket: prometheus-bucket
+              endpoint: s3.us-east-1.amazonaws.com
+              access_key:
+                name: s3-credentials
+                key: access_key
+              secret_key:
+                name: s3-credentials
+                key: secret_key
+              insecure: false
 
     grafana:
       sidecar:

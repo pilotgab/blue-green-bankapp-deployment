@@ -1,13 +1,26 @@
-application: loki-distributed
-clusterConfig:
-  namespace: monitoring
-chart:
-  name: loki-distributed
-  releaseName: loki
-  repoURL: https://grafana.github.io/helm-charts
-  targetRevision: 0.80.0
-  values: |
-    server:
+externalLabels:
+          geo: us
+          region: east
+          cluster: deel-test
+        thanos:
+          tag: v0.37.2
+          objectStorageConfig:
+            type: S3
+            config:
+              bucket: prometheus-bucket
+              endpoint: s3.us-east-1.amazonaws.com
+              access_key:
+                name: s3-credentials
+                key: access_key
+              secret_key:
+                name: s3-credentials
+                key: secret_key
+              insecure: false
+
+
+---
+
+server:
         http_listen_port: 3101
       positions:
         filename: /run/promtail/positions.yaml # File to track log positions for resumable ingestion
@@ -68,3 +81,5 @@ chart:
               target_label: app
             - source_labels: [__meta_kubernetes_node_name]
               target_label: node
+
+---
