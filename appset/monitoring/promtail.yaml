@@ -9,7 +9,7 @@ chart:
   values: |
     config:
       lokiAddress: "http://loki-loki-distributed-gateway/loki/api/v1/push"
-      logLevel: info
+      logLevel: debug
       server:
         http_listen_port: 3101
       positions:
@@ -20,7 +20,7 @@ chart:
             - role: pod
           pipeline_stages:
             - match:
-                selector: '{app=~".+"}'
+                selector: '{namespace="apps"}'
                 stages:
                   - docker: {}
                   - json:
