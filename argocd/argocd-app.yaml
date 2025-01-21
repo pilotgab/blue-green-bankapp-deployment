@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/pilotgab/blue-green-bankapp-deployment.git
     targetRevision: main
-    path: "bankapps/*.yaml"
+    path: "bankapps"
   destination:
     server: https://kubernetes.default.svc
     namespace: apps

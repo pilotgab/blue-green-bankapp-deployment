@@ -12,20 +12,20 @@ spec:
           - path: "appset/monitoring/*.yaml"
   template:
     metadata:
-      name: "{{ .application }}"
+      name: "{{ application }}"
     spec:
       project: default
       source:
-        chart: "{{ .chart.name }}"
-        targetRevision: "{{ .chart.targetRevision }}"
-        repoURL: "{{ .chart.repoURL }}"
+        chart: "{{ chart.name }}"
+        targetRevision: "{{ chart.targetRevision }}"
+        repoURL: "{{ chart.repoURL }}"
         helm:
-          releaseName: "{{ .chart.releaseName }}"
-          values: |-
-            {{ .chart.values }}
+          releaseName: "{{ chart.releaseName }}"
+          values: |
+            {{ chart.values }}
       destination:
         server: https://kubernetes.default.svc
-        namespace: "{{ .clusterConfig.namespace }}"
+        namespace: "{{ clusterConfig.namespace }}"
       syncPolicy:
         automated:
           prune: true
