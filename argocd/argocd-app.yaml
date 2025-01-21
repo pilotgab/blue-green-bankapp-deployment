@@ -6,14 +6,14 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/pilotgab/bankapp-blue-green-deployment.git
+    repoURL: https://github.com/pilotgab/blue-green-bankapp-deployment.git
     targetRevision: main
-    path: "Cluster/monitor/RBAC/bankapps"
+    path: "bankapps"
     directory:
       recurse: false
   destination:
     server: https://kubernetes.default.svc
-    namespace: "{{namespace}}"
+    namespace: apps
   syncPolicy:
     automated:
       prune: true

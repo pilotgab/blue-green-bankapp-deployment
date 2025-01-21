@@ -6,10 +6,10 @@ metadata:
 spec:
   generators:
     - git:
-        repoURL: "https://github.com/pilotgab/bankapp-blue-green-deployment.git"
-        directory:
-          path: appset/monitoring
+        repoURL: https://github.com/pilotgab/blue-green-bankapp-deployment.git
         revision: main
+        files:
+          - path: "appset/monitoring/*.yaml"
   template:
     metadata:
       name: "{{ .application }}"
