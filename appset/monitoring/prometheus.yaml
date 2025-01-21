@@ -1,7 +1,6 @@
 application: kube-prometheus-stack
 clusterConfig:
   namespace: monitoring
-  installCRDs: true
 chart:
   name: kube-prometheus-stack
   releaseName: kube-prometheus-stack
