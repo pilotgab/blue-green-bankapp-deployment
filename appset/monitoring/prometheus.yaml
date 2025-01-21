@@ -15,10 +15,33 @@ chart:
 
     prometheus:
       prometheusSpec:
-        serviceAccountName: prometheus-sa
+        serviceAccount: prometheus-sa
         serviceMonitorSelectorNilUsesHelmValues: false
         serviceMonitorSelector: {}
         serviceMonitorNamespaceSelector: {}
+        externalLabels:
+          geo: us
+          region: east
+          cluster: pilotgab-cluster
+        thanos:
+          tag: v0.37.2
+          objectStorageConfig:
+            type: S3
+            config:
+              bucket: prometheus-bucket
+              endpoint: s3.us-east-1.amazonaws.com
+              access_key:
+                name: s3-credentials
+                key: access_key
+              secret_key:
+                name: s3-credentials
+                key: secret_key
+              insecure: false
+          serviceAccount:
+            name: thanos-sa
+            create: true
+            annotations:
+              eks.amazonaws.com/role-arn: arn:aws:iam::345594590281:role/prom-role
 
 
     grafana:

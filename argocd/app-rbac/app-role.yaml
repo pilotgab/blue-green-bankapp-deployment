@@ -13,6 +13,7 @@ rules:
         "configmaps",
         "persistentvolumeclaims",
         "namespaces",
+        "serviceaccounts",
       ]
     verbs: ["*"]
   - apiGroups: ["apps"]
