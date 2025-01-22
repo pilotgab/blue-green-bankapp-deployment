@@ -18,64 +18,79 @@ spec:
     app.kubernetes.io/name: thanos-store
 
 ---
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Service
 metadata:
-  name: thanos-store-gateway
+  name: thanos-store
   namespace: monitoring
+  labels:
+    app.kubernetes.io/name: thanos-store
 spec:
+  clusterIP: None
+  ports:
+    - name: grpc
+      port: 10901
+      targetPort: 10901
+    - name: http
+      port: 10902
+      targetPort: 10902
+  selector:
+    app.kubernetes.io/name: thanos-store
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: thanos-store
+  namespace: monitoring
+  labels:
+    app: thanos-store
+    app.kubernetes.io/name: thanos-store
+spec:
+  serviceAccountName: thanos-store-gateway
+  serviceName: "thanos-store"
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: thanos-store-gateway
+      app.kubernetes.io/name: thanos-store
+      app: thanos-store
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: thanos-store-gateway
+        app: thanos-store
+        app.kubernetes.io/name: thanos-store
     spec:
-      serviceAccountName: thanos-store-gateway
       containers:
-        - name: thanos-store-gateway
-          image: thanosio/thanos:v0.37.2
+        - name: thanos-store
+          image: thanosio/thanos:v0.12.2
           args:
-            - store
-            - --log.level=debug
-            - --grpc-address=0.0.0.0:10901
-            - --http-address=0.0.0.0:10902
-            - --objstore.config=/etc/thanos/config.yaml
-          ports:
-            - name: grpc
-              containerPort: 10901
-            - name: http
-              containerPort: 10902
+            - "store"
+            - "--log.level=debug"
+            - "--data-dir=/var/thanos/store"
+            - "--grpc-address=0.0.0.0:10901"
+            - "--http-address=0.0.0.0:10902"
+            - "--objstore.config-file=/config/thanos-store.yml"
           livenessProbe:
+            failureThreshold: 8
             httpGet:
               path: /-/healthy
               port: 10902
               scheme: HTTP
-            initialDelaySeconds: 30
             periodSeconds: 30
-            failureThreshold: 8
-          readinessProbe:
-            httpGet:
-              path: /-/ready
-              port: 10902
-              scheme: HTTP
-            initialDelaySeconds: 5
-            periodSeconds: 5
-            failureThreshold: 20
+          ports:
+            - name: http
+              containerPort: 10902
+            - name: grpc
+              containerPort: 10901
           volumeMounts:
-            - name: objstore-config
-              mountPath: /etc/thanos
-              subPath: config.yaml
-          resources:
-            requests:
-              cpu: 500m
-              memory: 1Gi
-            limits:
-              cpu: 1
-              memory: 2Gi
+            - name: config
+              mountPath: /config/
+              readOnly: true
+            - name: data
+              mountPath: /var/thanos/store
+              readOnly: false
       volumes:
-        - name: objstore-config
+        - name: data
+          emptyDir: {}
+        - name: config
           configMap:
             name: thanos-objstore-config
