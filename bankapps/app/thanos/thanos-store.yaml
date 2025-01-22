@@ -40,7 +40,7 @@ spec:
         - name: thanos-store-gateway
           image: thanosio/thanos:v0.37.2
           args:
-            - "store-gateway"
+            - store
             - "--log.level=debug"
             - "--grpc-address=0.0.0.0:10901"
             - "--http-address=0.0.0.0:10902"
