@@ -68,6 +68,17 @@ spec:
             - name: data
               mountPath: /var/thanos/store
               readOnly: false
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: thanos-aws-credentials
+                  key: access_key
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: thanos-aws-credentials
+                  key: secret_key
           resources:
             requests:
               memory: "512Mi"
