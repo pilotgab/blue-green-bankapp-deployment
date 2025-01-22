@@ -8,13 +8,13 @@ chart:
   targetRevision: 68.2.1
   values: |
     serviceAccount:
-      name: kube-prometheus-stack
+      name: prometheus-sa
       annotations:
         eks.amazonaws.com/role-arn: arn:aws:iam::345594590281:role/prom-role
 
     prometheus:
       prometheusSpec:
-        serviceAccountName: kube-prometheus-stack
+        serviceAccountName: prometheus-sa
         serviceMonitorSelectorNilUsesHelmValues: false
         serviceMonitorSelector: {}
         serviceMonitorNamespaceSelector: {}
