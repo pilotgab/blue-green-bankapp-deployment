@@ -23,8 +23,6 @@ kind: Deployment
 metadata:
   name: thanos-store-gateway
   namespace: monitoring
-  labels:
-    app.kubernetes.io/name: thanos-store-gateway
 spec:
   replicas: 1
   selector:
@@ -41,33 +39,42 @@ spec:
           image: thanosio/thanos:v0.37.2
           args:
             - store
-            - "--log.level=debug"
-            - "--grpc-address=0.0.0.0:10901"
-            - "--http-address=0.0.0.0:10902"
-            - "--objstore.config=/etc/thanos/config.yaml"
-          volumeMounts:
-            - name: objstore-config
-              mountPath: /etc/thanos
-              subPath: config.yaml
+            - --log.level=debug
+            - --grpc-address=0.0.0.0:10901
+            - --http-address=0.0.0.0:10902
+            - --objstore.config=/etc/thanos/config.yaml
           ports:
-            - name: http
-              containerPort: 10902
             - name: grpc
               containerPort: 10901
+            - name: http
+              containerPort: 10902
           livenessProbe:
-            failureThreshold: 8
             httpGet:
               path: /-/healthy
               port: 10902
               scheme: HTTP
+            initialDelaySeconds: 30
             periodSeconds: 30
+            failureThreshold: 8
           readinessProbe:
-            failureThreshold: 20
             httpGet:
               path: /-/ready
               port: 10902
               scheme: HTTP
+            initialDelaySeconds: 5
             periodSeconds: 5
+            failureThreshold: 20
+          volumeMounts:
+            - name: objstore-config
+              mountPath: /etc/thanos
+              subPath: config.yaml
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: 1
+              memory: 2Gi
       volumes:
         - name: objstore-config
           configMap:
