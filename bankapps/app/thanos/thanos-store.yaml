@@ -16,26 +16,6 @@ spec:
       targetPort: 10902
   selector:
     app.kubernetes.io/name: thanos-store
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: thanos-store
-  namespace: monitoring
-  labels:
-    app.kubernetes.io/name: thanos-store
-spec:
-  clusterIP: None
-  ports:
-    - name: grpc
-      port: 10901
-      targetPort: 10901
-    - name: http
-      port: 10902
-      targetPort: 10902
-  selector:
-    app.kubernetes.io/name: thanos-store
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -88,6 +68,13 @@ spec:
             - name: data
               mountPath: /var/thanos/store
               readOnly: false
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
       volumes:
         - name: data
           emptyDir: {}

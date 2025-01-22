@@ -9,12 +9,9 @@ data:
     config:
       bucket: "prometheus-bucket"
       endpoint: "s3.us-east-1.amazonaws.com"
-
       region: "us-east-1"
       insecure: false
-      use HTTP
-      signature_version2:
-      Signature Version 2
+      signature_version2: false
       sse_config:
         type: "SSE-S3"
       max_retries: 0
