@@ -5,16 +5,7 @@ metadata:
 rules:
   - apiGroups: [""]
     resources:
-      [
-        "pods",
-        "services",
-        "endpoints",
-        "secrets",
-        "configmaps",
-        "persistentvolumeclaims",
-        "namespaces",
-        "serviceaccounts",
-      ]
+      ["pods", "services", "endpoints", "secrets", "configmaps", "namespaces"]
     verbs: ["*"]
   - apiGroups: ["apps"]
     resources: ["deployments", "daemonsets", "replicasets", "statefulsets"]
@@ -43,3 +34,6 @@ rules:
   - apiGroups: ["external-secrets.io"]
     resources: ["externalsecrets", "secretstores", "clustersecretstores"]
     verbs: ["*"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims", "persistentvolume", "serviceaccounts"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]

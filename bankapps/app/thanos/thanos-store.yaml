@@ -19,42 +19,41 @@ spec:
 
 ---
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
-  name: thanos-store
+  name: thanos-store-gateway
   namespace: monitoring
   labels:
-    app: thanos-store
-    app.kubernetes.io/name: thanos-store
+    app.kubernetes.io/name: thanos-store-gateway
 spec:
-  serviceName: "thanos-store"
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: thanos-store
-      app: thanos-store
+      app.kubernetes.io/name: thanos-store-gateway
   template:
     metadata:
       labels:
-        app: thanos-store
-        app.kubernetes.io/name: thanos-store
+        app.kubernetes.io/name: thanos-store-gateway
     spec:
+      serviceAccountName: thanos-store-gateway
       containers:
-        - name: thanos-store
+        - name: thanos-store-gateway
           image: thanosio/thanos:v0.37.2
           args:
-            - "store"
+            - "store-gateway"
             - "--log.level=debug"
-            - "--data-dir=/var/thanos/store"
             - "--grpc-address=0.0.0.0:10901"
             - "--http-address=0.0.0.0:10902"
-            - "--objstore.config=$(OBJSTORE_CONFIG)"
-          env:
-            - name: OBJSTORE_CONFIG
-              valueFrom:
-                secretKeyRef:
-                  name: s3-credentials
-                  key: config
+            - "--objstore.config=/etc/thanos/config.yaml"
+          volumeMounts:
+            - name: objstore-config
+              mountPath: /etc/thanos
+              subPath: config.yaml
+          ports:
+            - name: http
+              containerPort: 10902
+            - name: grpc
+              containerPort: 10901
           livenessProbe:
             failureThreshold: 8
             httpGet:
@@ -62,15 +61,14 @@ spec:
               port: 10902
               scheme: HTTP
             periodSeconds: 30
-          ports:
-            - name: http
-              containerPort: 10902
-            - name: grpc
-              containerPort: 10901
-          volumeMounts:
-            - name: data
-              mountPath: /var/thanos/store
-              readOnly: false
+          readinessProbe:
+            failureThreshold: 20
+            httpGet:
+              path: /-/ready
+              port: 10902
+              scheme: HTTP
+            periodSeconds: 5
       volumes:
-        - name: data
-          emptyDir: {}
+        - name: objstore-config
+          configMap:
+            name: thanos-objstore-config

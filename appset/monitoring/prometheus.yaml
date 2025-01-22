@@ -8,14 +8,13 @@ chart:
   targetRevision: 68.2.1
   values: |
     serviceAccount:
-      name: prometheus-sa
-      create: true
+      name: kube-prometheus-stack
       annotations:
         eks.amazonaws.com/role-arn: arn:aws:iam::345594590281:role/prom-role
 
     prometheus:
       prometheusSpec:
-        serviceAccountName: prometheus-sa
+        serviceAccountName: kube-prometheus-stack
         serviceMonitorSelectorNilUsesHelmValues: false
         serviceMonitorSelector: {}
         serviceMonitorNamespaceSelector: {}
@@ -30,12 +29,6 @@ chart:
             config:
               bucket: prometheus-bucket
               endpoint: s3.us-east-1.amazonaws.com
-              access_key:
-                name: s3-credentials
-                key: access_key
-              secret_key:
-                name: s3-credentials
-                key: secret_key
               insecure: false
 
     grafana:

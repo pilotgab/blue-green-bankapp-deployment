@@ -20,6 +20,8 @@ rules:
       - apps
     resources:
       - deployments
+      - statefulsets
+      - daemonsets
     verbs:
       - get
       - list

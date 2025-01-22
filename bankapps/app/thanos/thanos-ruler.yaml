@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thanos-ruler
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: thanos-ruler
+  template:
+    metadata:
+      labels:
+        app: thanos-ruler
+    spec:
+      serviceAccountName: thanos-ruler
+      containers:
+        - name: thanos-ruler
+          image: quay.io/thanos/thanos:v0.37.2
+          args:
+            - rule
+            - --data-dir=/data
+            - --objstore.config-file=/etc/thanos/config.yaml
+          volumeMounts:
+            - name: thanos-objstore-config
+              mountPath: /etc/thanos
+            - name: thanos-ruler-data
+              mountPath: /data
+      volumes:
+        - name: thanos-objstore-config
+          configMap:
+            name: thanos-objstore-config
+        - name: thanos-ruler-data
+          persistentVolumeClaim:
+            claimName: thanos-ruler-pvc
