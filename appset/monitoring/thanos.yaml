@@ -4,8 +4,8 @@ clusterConfig:
 chart:
   name: thanos
   releaseName: thanos
-  repoURL: https://charts.bitnami.com/bitnami
-  targetRevision: v0.37.2
+  repoURL: https://github.com/bitnami/charts.git
+  targetRevision: 15.10.2
   values: |
     query:
       dnsDiscovery:
