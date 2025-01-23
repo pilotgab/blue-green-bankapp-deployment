@@ -4,12 +4,12 @@ clusterConfig:
 chart:
   name: thanos
   releaseName: thanos
-  repoURL: https://github.com/thanos-io/thanos.git
+  repoURL: https://charts.bitnami.com/bitnami
   targetRevision: 0.37.2
   values: |
     query:
       dnsDiscovery:
-        sidecarsService: "prometheus-operated"
+        sidecarsService: "kube-prometheus-stack-operator"
         sidecarsNamespace: "monitoring"
       serviceAccount:
         create: false
@@ -63,7 +63,7 @@ chart:
 
   # Alertmanager configuration
   alertmanagers:
-    - http://kube-prometheus-alertmanager.monitoring.svc.cluster.local:9093
+    - http://kube-prometheusstack-alertmanager.monitoring.svc.cluster.local:9093
 
   # Additional configuration for Prometheus integration
   config: |
