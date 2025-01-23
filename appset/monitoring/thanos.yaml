@@ -4,8 +4,8 @@ clusterConfig:
 chart:
   name: thanos
   releaseName: thanos
-  repoURL: oci://registry-1.docker.io/bitnamicharts/thanos
-  targetRevision: 15.10.2
+  repoURL: https://github.com/thanos-io/thanos.git
+  targetRevision: v0.37.2
   values: |
     query:
       dnsDiscovery:
