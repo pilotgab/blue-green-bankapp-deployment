@@ -5,7 +5,7 @@ chart:
   name: thanos
   releaseName: thanos
   repoURL: https://charts.bitnami.com/bitnami
-  targetRevision: 0.37.2
+  targetRevision: 15.10.2
   values: |
     query:
       dnsDiscovery:
