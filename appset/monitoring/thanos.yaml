@@ -5,7 +5,7 @@ chart:
   name: thanos
   releaseName: thanos
   repoURL: https://github.com/thanos-io/thanos.git
-  targetRevision: latest
+  targetRevision: 0.37.2
   values: |
     query:
       dnsDiscovery:
