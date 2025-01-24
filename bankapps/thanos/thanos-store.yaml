@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: thanos-store
+  name: thanos-store-gateway
   namespace: monitoring
   labels:
-    app.kubernetes.io/name: thanos-store
+    app.kubernetes.io/name: thanos-store-gateway
 spec:
   clusterIP: None
   ports:
@@ -16,15 +16,13 @@ spec:
       targetPort: 10902
   selector:
     app.kubernetes.io/name: thanos-store
+
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: thanos-store
   namespace: monitoring
-  labels:
-    app: thanos-store
-    app.kubernetes.io/name: thanos-store
 spec:
   serviceAccountName: thanos-store-gateway
   serviceName: "thanos-store"
@@ -48,7 +46,7 @@ spec:
             - "--data-dir=/var/thanos/store"
             - "--grpc-address=0.0.0.0:10901"
             - "--http-address=0.0.0.0:10902"
-            - "--objstore.config-file=/config/thanos-store.yml"
+            - "--objstore.config-file=/config/thanos.yaml"
           livenessProbe:
             failureThreshold: 8
             httpGet:
@@ -68,17 +66,6 @@ spec:
             - name: data
               mountPath: /var/thanos/store
               readOnly: false
-          env:
-            - name: AWS_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: thanos-aws-credentials
-                  key: access_key
-            - name: AWS_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: thanos-aws-credentials
-                  key: secret_key
           resources:
             requests:
               memory: "512Mi"

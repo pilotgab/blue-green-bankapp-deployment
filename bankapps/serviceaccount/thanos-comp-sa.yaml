@@ -1,7 +1,39 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: thanos-sa
+  name: thanos-query
   namespace: monitoring
   annotations:
     eks.amazonaws.com/role-arn: arn:aws:iam::345594590281:role/thanos-role
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: thanos-store-gateway
+  namespace: monitoring
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::345594590281:role/thanos-role
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: thanos-compactor
+  namespace: monitoring
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::345594590281:role/thanos-role
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: thanos-ruler
+  namespace: monitoring
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::345594590281:role/thanos-role
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus-sa
+  namespace: monitoring
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::345594590281:role/prom-role

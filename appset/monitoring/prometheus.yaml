@@ -22,6 +22,13 @@ chart:
           geo: us
           region: east
           cluster: pilotgab-cluster
+        thanos:
+          tag: v0.37.2
+          objectStorageConfig:
+            key: thanos.yaml
+            name: thanos-objstore-config
+        extraLabels:
+          app: prometheus
     grafana:
       sidecar:
         datasources:

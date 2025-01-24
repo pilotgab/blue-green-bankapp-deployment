@@ -1,0 +1,218 @@
+application: aws-ebs-csi-driver
+clusterConfig:
+  namespace: kube-system
+chart:
+  name: aws-ebs-csi-driver
+  releaseName: aws-ebs-csi-driver
+  repoURL: "https://kubernetes-sigs.github.io/aws-ebs-csi-driver"
+  targetRevision: "v2.17.1"
+  values: |
+    controller:
+      additionalArgs: []
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: eks.amazonaws.com/compute-type
+                operator: NotIn
+                values:
+                - fargate
+            weight: 1
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - ebs-csi-controller
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      containerSecurityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+      defaultFsType: ext4
+      enableMetrics: false
+      env: []
+      envFrom: []
+      extraCreateMetadata: true
+      extraVolumeTags: {}
+      httpEndpoint: null
+      initContainers: []
+      k8sTagClusterId: null
+      logLevel: 2
+      loggingFormat: text
+      nodeSelector: {}
+      podAnnotations: {}
+      podLabels: {}
+      priorityClassName: system-cluster-critical
+      region: null
+      replicaCount: 2
+      resources:
+        limits:
+          cpu: 100m
+          memory: 256Mi
+        requests:
+          cpu: 10m
+          memory: 40Mi
+      sdkDebugLog: false
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+      serviceAccount:
+        annotations: {}
+        create: true
+        name: ebs-csi-controller-sa
+      serviceMonitor:
+        forceEnable: false
+        labels:
+          release: prometheus
+      tolerations:
+      - key: CriticalAddonsOnly
+        operator: Exists
+      - effect: NoExecute
+        operator: Exists
+        tolerationSeconds: 300
+      topologySpreadConstraints: []
+      updateStrategy:
+        rollingUpdate:
+          maxUnavailable: 1
+        type: RollingUpdate
+      volumeMounts: []
+      volumes: []
+    customLabels: {}
+    fullnameOverride: null
+    image:
+      pullPolicy: IfNotPresent
+      repository: public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver
+      tag: ""
+    imagePullSecrets: []
+    nameOverride: null
+    node:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: eks.amazonaws.com/compute-type
+                operator: NotIn
+                values:
+                - fargate
+      containerSecurityContext:
+        privileged: true
+        readOnlyRootFilesystem: true
+      enableWindows: false
+      env: []
+      envFrom: []
+      kubeletPath: /var/lib/kubelet
+      logLevel: 2
+      loggingFormat: text
+      nodeSelector: {}
+      podAnnotations: {}
+      podLabels: {}
+      priorityClassName: null
+      resources:
+        limits:
+          cpu: 100m
+          memory: 256Mi
+        requests:
+          cpu: 10m
+          memory: 40Mi
+      securityContext:
+        fsGroup: 0
+        runAsGroup: 0
+        runAsNonRoot: false
+        runAsUser: 0
+      serviceAccount:
+        annotations: {}
+        create: true
+        name: ebs-csi-node-sa
+      tolerateAllTaints: true
+      tolerations:
+      - effect: NoExecute
+        operator: Exists
+        tolerationSeconds: 300
+      updateStrategy:
+        rollingUpdate:
+          maxUnavailable: 10%
+        type: RollingUpdate
+      volumeAttachLimit: null
+    proxy:
+      http_proxy: null
+      no_proxy: null
+    sidecars:
+      attacher:
+        env: []
+        image:
+          pullPolicy: IfNotPresent
+          repository: public.ecr.aws/eks-distro/kubernetes-csi/external-attacher
+          tag: v4.1.0-eks-1-25-latest
+        leaderElection:
+          enabled: true
+        logLevel: 2
+        resources: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+      livenessProbe:
+        image:
+          pullPolicy: IfNotPresent
+          repository: public.ecr.aws/eks-distro/kubernetes-csi/livenessprobe
+          tag: v2.9.0-eks-1-25-latest
+        resources: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+      nodeDriverRegistrar:
+        env: []
+        image:
+          pullPolicy: IfNotPresent
+          repository: public.ecr.aws/eks-distro/kubernetes-csi/node-driver-registrar
+          tag: v2.7.0-eks-1-25-latest
+        logLevel: 2
+        resources: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+      provisioner:
+        env: []
+        image:
+          pullPolicy: IfNotPresent
+          repository: public.ecr.aws/eks-distro/kubernetes-csi/external-provisioner
+          tag: v3.4.0-eks-1-25-latest
+        leaderElection:
+          enabled: true
+        logLevel: 2
+        resources: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+      resizer:
+        env: []
+        image:
+          pullPolicy: IfNotPresent
+          repository: public.ecr.aws/eks-distro/kubernetes-csi/external-resizer
+          tag: v1.7.0-eks-1-25-latest
+        logLevel: 2
+        resources: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+      snapshotter:
+        env: []
+        forceEnable: false
+        image:
+          pullPolicy: IfNotPresent
+          repository: public.ecr.aws/eks-distro/kubernetes-csi/external-snapshotter/csi-snapshotter
+          tag: v6.2.1-eks-1-25-latest
+        logLevel: 2
+        resources: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+    storageClasses: []
+    useOldCSIDriver: false

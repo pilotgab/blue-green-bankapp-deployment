@@ -20,7 +20,7 @@ spec:
           args:
             - compact
             - --data-dir=/data
-            - --objstore.config-file=/etc/thanos/config.yaml
+            - --objstore.config-file=/etc/thanos/thanos.yaml
           volumeMounts:
             - name: thanos-objstore-config
               mountPath: /etc/thanos

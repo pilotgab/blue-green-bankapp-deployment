@@ -4,14 +4,14 @@ metadata:
   name: thanos-objstore-config
   namespace: monitoring
 data:
-  thanos-store.yml: |-
+  thanos.yaml: |-
     type: S3
     config:
-      bucket: "prometheus-bucket"
-      endpoint: "s3.us-east-1.amazonaws.com"
+      bucket: "thanos-metrices"
+      endpoint: "s3.amazonaws.com"
       region: "us-east-1"
       insecure: false
       signature_version2: false
       sse_config:
         type: "SSE-S3"
-      max_retries: 0
+      max_retries: 10

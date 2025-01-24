@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: thanos-compactor-pvc
+  namespace: monitoring
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 25Gi
+  storageClassName: ebs-storageclass
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: thanos-ruler-pvc
+  namespace: monitoring
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 25Gi
+  storageClassName: ebs-storageclass
