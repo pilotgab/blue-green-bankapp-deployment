@@ -21,7 +21,7 @@ chart:
         externalLabels:
           geo: us
           region: east
-          cluster: pilotgab-cluster
+          cluster: deel-test
         thanos:
           tag: v0.37.2
           objectStorageConfig:
