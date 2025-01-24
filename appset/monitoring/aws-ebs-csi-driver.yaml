@@ -35,7 +35,9 @@ chart:
         readOnlyRootFilesystem: true
       defaultFsType: ext4
       enableMetrics: false
-      env: []
+      env:
+      - name: AWS_REGION
+        value: us-east-1
       envFrom: []
       extraCreateMetadata: true
       extraVolumeTags: {}
@@ -106,7 +108,9 @@ chart:
         privileged: true
         readOnlyRootFilesystem: true
       enableWindows: false
-      env: []
+      env:
+      - name: AWS_REGION
+        value: us-east-1
       envFrom: []
       kubeletPath: /var/lib/kubelet
       logLevel: 2
