@@ -27,7 +27,7 @@ spec:
             - --http-address=0.0.0.0:9090
             - --query.partial-response
             - --query.replica-label=prometheus_replica
-            - --store=dnssrv+_grpc._tcp.thanos-store-gateway.monitoring.svc.cluster.local
+            - --store=dnssrv+_grpc._tcp.thanos-store.monitoring.svc.cluster.local
           ports:
             - name: grpc
               containerPort: 10901
