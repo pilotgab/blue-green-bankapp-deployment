@@ -7,3 +7,54 @@ chart:
   repoURL: https://traefik.github.io/charts
   targetRevision: v34.1.0
   values: |
+    entryPoints:
+      http:
+        address: ":80"
+        http:
+          redirections:
+            entryPoint:
+              to: https
+              scheme: https
+      https:
+        address: ":443"
+        http:
+          tls:
+            certResolver: letsencrypt
+            domains:
+              - main: gabapp.tech
+                sans:
+                  - "*.gabapp.tech"
+
+    providers:
+      docker:
+        exposedByDefault: false
+
+    api:
+      dashboard: true
+
+    certificatesResolvers:
+      letsencrypt:
+        acme:
+          email: gabidachaba@gmail.com
+          storage: /letsencrypt/acme.json
+          dnsChallenge:
+            provider: cloudflare
+            resolvers:
+              - "1.1.1.1:53"
+              - "1.0.0.1:53"
+            delayBeforeCheck: 20
+          env:
+            CLOUDFLARE_API_TOKEN: # This references the secret loaded as an environment variable.
+
+    volumes:
+      - name: letsencrypt-storage
+        mountPath: /letsencrypt
+        persistentVolumeClaim:
+          claimName: traefik-lets-encrypt-pvc
+
+    env:
+      - name: CLOUDFLARE_API_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: cloudflare-api-token-secret
+            key: apiToken

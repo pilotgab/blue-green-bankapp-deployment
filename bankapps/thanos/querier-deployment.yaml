@@ -15,7 +15,6 @@ spec:
       labels:
         app: thanos-query
     spec:
-      serviceAccountName: thanos-query
       containers:
         - name: thanos-query
           image: quay.io/thanos/thanos:v0.37.2

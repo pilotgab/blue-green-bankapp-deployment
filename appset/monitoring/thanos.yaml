@@ -9,11 +9,11 @@ chart:
   values: |
     query:
       dnsDiscovery:
-        sidecarsService: "kube-prometheus-stack-operator"
+        sidecarsService: "prometheus_operated"
         sidecarsNamespace: "monitoring"
       serviceAccount:
-        create: false
-        name: thanos-sa
+        create: true
+        name: thanos-sidecare
 
   compactor:
     enabled: true
@@ -25,8 +25,8 @@ chart:
         region: us-east-1
         insecure: false
     serviceAccount:
-      create: false
-      name: thanos-sa
+      create: true
+      name: thanos-compactor
 
   storegateway:
     enabled: true
@@ -38,8 +38,8 @@ chart:
         region: us-east-1
         insecure: false
     serviceAccount:
-      create: false
-      name: thanos-sa
+      create: true
+      name: thanos-store-gateway
 
   metrics:
     enabled: true
@@ -58,8 +58,8 @@ chart:
   ruler:
     enabled: true
     serviceAccount:
-      create: false
-      name: thanos-sa
+      create: true
+      name: thanos-ruler
 
   # Alertmanager configuration
   alertmanagers:

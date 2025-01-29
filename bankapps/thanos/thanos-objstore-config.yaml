@@ -15,3 +15,5 @@ data:
       sse_config:
         type: "SSE-S3"
       max_retries: 10
+      access_key: "${ACCESS_KEY}"
+      secret_key: "${SECRET_KEY}"

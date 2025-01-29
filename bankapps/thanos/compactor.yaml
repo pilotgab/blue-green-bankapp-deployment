@@ -13,7 +13,6 @@ spec:
       labels:
         app: thanos-compactor
     spec:
-      serviceAccountName: thanos-compactor
       containers:
         - name: thanos-compactor
           image: quay.io/thanos/thanos:v0.37.2
@@ -26,6 +25,9 @@ spec:
               mountPath: /etc/thanos
             - name: thanos-compactor-data
               mountPath: /data
+          envFrom:
+            - secretRef:
+                name: s3-credentials
           resources:
             requests:
               cpu: 250m

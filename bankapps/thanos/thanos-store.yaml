@@ -24,7 +24,6 @@ metadata:
   name: thanos-store
   namespace: monitoring
 spec:
-  serviceAccountName: thanos-store
   serviceName: "thanos-store"
   replicas: 1
   selector:
@@ -66,6 +65,9 @@ spec:
             - name: data
               mountPath: /var/thanos/store
               readOnly: false
+          envFrom:
+            - secretRef:
+                name: s3-credentials
           resources:
             requests:
               memory: 256Mi
