@@ -1,94 +1,74 @@
-apiVersion: argoproj.io/v1alpha1
-kind: ApplicationSet
-metadata:
-  name: thanos-applicationset
-  namespace: argocd
-spec:
-  generators:
-    - list:
-        elements:
-          - cluster: "target-cluster"
-            namespace: "monitoring"
-            releaseName: "thanos"
-  template:
-    metadata:
-      name: thanos-{{cluster}}
-    spec:
-      project: default
-      source:
-        repoURL: https://charts.bitnami.com/bitnami
-        chart: thanos
-        targetRevision: 0.37.2
-        helm:
-          releaseName: thanos
-          values: |
-            query:
-              dnsDiscovery:
-                sidecarsService: "prometheus_operated"
-                sidecarsNamespace: "monitoring"
-              serviceAccount:
-                create: true
-                name: thanos-sidecar
+application: thanos
+clusterConfig:
+  namespace: monitoring
+chart:
+  name: thanos
+  releaseName: thanos
+  repoURL: https://charts.bitnami.com/bitnami
+  targetRevision: 0.37.2
+  values: |
+    query:
+      dnsDiscovery:
+        sidecarsService: "prometheus_operated"
+        sidecarsNamespace: "monitoring"
+      serviceAccount:
+        create: true
+        name: thanos-sidecare
 
-            compactor:
-              enabled: true
-              objstoreConfig: |
-                type: S3
-                config:
-                  bucket: thanos-metrices
-                  endpoint: s3.amazonaws.com
-                  region: us-east-1
-                  insecure: false
-              serviceAccount:
-                create: true
-                name: thanos-compactor
+  compactor:
+    enabled: true
+    objstoreConfig: |
+      type: S3
+      config:
+        bucket: thanos-metrices
+        endpoint: s3.amazonaws.com
+        region: us-east-1
+        insecure: false
+    serviceAccount:
+      create: true
+      name: thanos-compactor
 
-            storegateway:
-              enabled: true
-              objstoreConfig: |
-                type: S3
-                config:
-                  bucket: thanos-metrices
-                  endpoint: s3.amazonaws.com
-                  region: us-east-1
-                  insecure: false
-              serviceAccount:
-                create: true
-                name: thanos-store-gateway
+  storegateway:
+    enabled: true
+    objstoreConfig: |
+      type: S3
+      config:
+        bucket: thanos-metrices
+        endpoint: s3.amazonaws.com
+        region: us-east-1
+        insecure: false
+    serviceAccount:
+      create: true
+      name: thanos-store-gateway
 
-            metrics:
-              enabled: true
-              serviceMonitor:
-                enabled: true
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
 
-            minio:
-              enabled: false
+  # Disable MinIO since we're using AWS S3
+  minio:
+    enabled: false
 
-            bucketweb:
-              enabled: true
+  # Bucket Web configuration
+  bucketweb:
+    enabled: true
 
-            ruler:
-              enabled: true
-              serviceAccount:
-                create: true
-                name: thanos-ruler
+  # Ruler configuration
+  ruler:
+    enabled: true
+    serviceAccount:
+      create: true
+      name: thanos-ruler
 
-            alertmanagers:
-              - http://kube-prometheusstack-alertmanager.monitoring.svc.cluster.local:9093
+  # Alertmanager configuration
+  alertmanagers:
+    - http://kube-prometheusstack-alertmanager.monitoring.svc.cluster.local:9093
 
-            config: |
-              groups:
-                - name: "metamonitoring"
-                  rules:
-                    - alert: "PrometheusDown"
-                      expr: absent(up{prometheus="monitoring/kube-prometheus"})
-
-      destination:
-        server: https://kubernetes.default.svc # Change this for external clusters
-        namespace: "{ { namespace } }"
-      syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
-        syncOptions:
-          - CreateNamespace=true
+  # Additional configuration for Prometheus integration
+  config: |
+    groups:
+      - name: "metamonitoring"
+        rules:
+          - alert: "PrometheusDown"
+            expr: absent(up{prometheus="monitoring/kube-prometheus"})
