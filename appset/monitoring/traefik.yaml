@@ -7,54 +7,57 @@ chart:
   repoURL: https://traefik.github.io/charts
   targetRevision: v34.1.0
   values: |
-    entryPoints:
-      http:
-        address: ":80"
-        http:
-          redirections:
-            entryPoint:
-              to: https
-              scheme: https
-      https:
-        address: ":443"
-        http:
-          tls:
-            certResolver: letsencrypt
-            domains:
-              - main: gabapp.tech
-                sans:
-                  - "*.gabapp.tech"
-
-    providers:
-      docker:
-        exposedByDefault: false
-
-    api:
-      dashboard: true
-
-    certificatesResolvers:
-      letsencrypt:
-        acme:
-          email: gabidachaba@gmail.com
-          storage: /letsencrypt/acme.json
-          dnsChallenge:
-            provider: cloudflare
-            resolvers:
-              - "1.1.1.1:53"
-              - "1.0.0.1:53"
-            delayBeforeCheck: 20
-          env:
-            CLOUDFLARE_API_TOKEN: # This references the secret loaded as an environment variable.
-
-    volumes:
-      - name: letsencrypt-storage
-        mountPath: /letsencrypt
-        persistentVolumeClaim:
-          claimName: traefik-lets-encrypt-pvc
-
+    additionalArguments:
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
+      - --certificatesresolvers.cloudflare.acme.email=gabidachaba@gmail.com
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1
+      - --certificatesresolvers.cloudflare.acme.storage=/ssl-certs/acme-cloudflare.json
     env:
-      - name: CLOUDFLARE_API_TOKEN
+      - name: CF_API_KEY
         valueFrom:
           secretKeyRef:
-            name: cloudflare-api-token-secret
-            key: apiToken
+            name: cloudflare-credentials
+            key: apikey
+    logs:
+      general:
+        level: "ERROR"
+    ports:
+      web:
+        redirectTo: websecure
+      websecure:
+        tls:
+          enabled: true
+          certResolver: cloudflare
+
+    persistence:
+      enabled: true
+      name: ssl-certs
+      persistentVolumeClaim:
+        claimName: ssl-certs
+      path: /ssl-certs
+
+    deployment:
+      initContainers:
+        - name: volume-permissions
+          image: busybox:latest
+          command: ["sh", "-c", "touch /ssl-certs/acme-cloudflare.json; chmod -Rv 600 /ssl-certs/acme-cloudflare.json"]
+        volumeMounts:
+         - name: ssl-certs
+           mountPath: /ssl-certs
+
+    volumes:
+      - name: ssl-certs
+        persistentVolumeClaim:
+          claimName: ssl-certs
+
+    ingressClass:
+      enabled: true
+      isDefaultClass: true
+
+    resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: "500m"
+              memory: 512Mi

@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bankapp-blue
+  name: bankapp-green
   namespace: apps
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: bankapp
-      version: blue
+      version: green
   template:
     metadata:
       labels:
         app: bankapp
-        version: blue
+        version: green
     spec:
       containers:
         - name: bankapp
-          image: captaingab/bankapp:blue
+          image: captaingab/bankapp:green
           ports:
             - containerPort: 8080
           env:

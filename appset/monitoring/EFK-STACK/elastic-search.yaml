@@ -1,0 +1,17 @@
+application: elasticsearch
+clusterConfig:
+  namespace: logging
+chart:
+  name: elasticsearch
+  releaseName: elasticsearch
+  repoURL: https://helm.elastic.co
+  targetRevision: latest
+  values: |
+    --set replicas=1
+
+    persistence:
+      label:
+        enabled: true
+      name: elasticsearch
+      persistentVolumeClaim:
+        claimName: elasticsearch

@@ -20,7 +20,7 @@ chart:
             - role: pod
           pipeline_stages:
             - match:
-                selector: '{namespace="apps"}'
+                selector: '{namespace="*"}'
                 stages:
                   - docker: {}
                   - json:

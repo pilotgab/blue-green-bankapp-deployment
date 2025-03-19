@@ -1,0 +1,9 @@
+application: kibana
+clusterConfig:
+  namespace: logging
+chart:
+  name: kibana
+  releaseName: kibana
+  repoURL: https://helm.elastic.co
+  targetRevision: latest
+  values: |

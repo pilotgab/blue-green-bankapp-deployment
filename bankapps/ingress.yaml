@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bank-app-ingress
+  namespace: apps
+  labels:
+    name: bank-app-ingress
+spec:
+  rules:
+    - host: bankapp.gabapp.tech
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: bankapp-service
+                port:
+                  number: 80
