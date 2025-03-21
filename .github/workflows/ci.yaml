@@ -1,0 +1,148 @@
+name: Java CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - "feature/**"
+      - "main"
+
+env:
+  ACR_LOGIN_SERVER: javaapplicationacr.azurecr.io
+  IMAGE_NAME: java-app
+  HELM_VALUES_FILE: helm/values.yaml
+
+jobs:
+  feature-tests:
+    if: startsWith(github.ref, 'refs/heads/feature/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Compile Java code
+        run: mvn compile --batch-mode
+
+      - name: Lint with Checkstyle
+        run: mvn checkstyle:check --batch-mode
+
+      - name: Static Code Analysis (SpotBugs)
+        run: mvn com.github.spotbugs:spotbugs-maven-plugin:check --batch-mode
+
+      - name: Run Unit Tests
+        run: mvn test --batch-mode
+
+      - name: Run Integration Tests
+        run: mvn verify --batch-mode
+
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/maven@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --sarif-file-output=snyk.sarif --severity-threshold=high
+
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk.sarif
+
+      - name: Build artifact
+        run: mvn package --batch-mode
+
+  test:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Compile
+        run: mvn compile --batch-mode
+
+      - name: Lint with Checkstyle
+        run: mvn checkstyle:check --batch-mode
+
+      - name: Static Code Analysis (SpotBugs)
+        run: mvn com.github.spotbugs:spotbugs-maven-plugin:check --batch-mode
+
+      - name: Run Unit Tests
+        run: mvn test --batch-mode
+
+      - name: Run Integration Tests
+        run: mvn verify --batch-mode
+
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/maven@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --sarif-file-output=snyk.sarif --severity-threshold=high
+
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk.sarif
+
+      - name: Build artifact
+        run: mvn package --batch-mode
+
+  publish-image:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set Docker image tag to short SHA
+        run: echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Build Docker image
+        run: |
+          docker build -t $ACR_LOGIN_SERVER/$IMAGE_NAME:${{ env.IMAGE_TAG }} .
+
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          format: table
+          exit-code: 1
+          severity: "CRITICAL,HIGH"
+
+      - name: Login to Azure Container Registry (ACR)
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ env.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Push Docker image to ACR
+        run: |
+          docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:${{ env.IMAGE_TAG }}
+
+      - name: Update Helm values.yaml
+        run: |
+          sed -i "s|repository:.*|repository: $ACR_LOGIN_SERVER/$IMAGE_NAME|" $HELM_VALUES_FILE
+          sed -i "s|tag:.*|tag: \"${{ env.IMAGE_TAG }}\"|" $HELM_VALUES_FILE
+
+      - name: Commit and push Helm update to feature branch
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git checkout -b feature/auto-update-helm
+          git add $HELM_VALUES_FILE
+          git commit -m "chore: update image tag to ${{ env.IMAGE_TAG }} in helm values.yaml"
+          git push origin feature/auto-update-helm
