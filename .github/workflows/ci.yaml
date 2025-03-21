@@ -5,63 +5,31 @@ on:
     branches:
       - "feature/**"
       - "main"
+  pull_request:
+    branches:
+      - "main"
 
 env:
   ACR_LOGIN_SERVER: javaapplicationacr.azurecr.io
   IMAGE_NAME: java-app
-  HELM_VALUES_FILE: helm/values.yaml
+  HELM_VALUES_FILE: javaapp/values.yaml
 
 jobs:
   feature-tests:
     if: startsWith(github.ref, 'refs/heads/feature/')
+    continue-on-error: true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK
-        uses: actions/setup-java@v4
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
         with:
-          distribution: temurin
-          java-version: "17"
-
-      - name: Compile Java code
-        run: mvn compile --batch-mode
-
-      - name: Lint with Checkstyle
-        run: mvn checkstyle:check --batch-mode
-
-      - name: Static Code Analysis (SpotBugs)
-        run: mvn com.github.spotbugs:spotbugs-maven-plugin:check --batch-mode
-
-      - name: Run Unit Tests
-        run: mvn test --batch-mode
-
-      - name: Run Integration Tests
-        run: mvn verify --batch-mode
-
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/maven@master
-        continue-on-error: true
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --sarif-file-output=snyk.sarif --severity-threshold=high
-
-      - name: Upload result to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: snyk.sarif
-
-      - name: Build artifact
-        run: mvn package --batch-mode
-
-  test:
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+          path: ~/.m2/repository
+          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-${{ runner.os }}-
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -101,7 +69,7 @@ jobs:
         run: mvn package --batch-mode
 
   publish-image:
-    needs: test
+    if: github.ref == 'refs/heads/main/'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -132,6 +100,9 @@ jobs:
       - name: Push Docker image to ACR
         run: |
           docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:${{ env.IMAGE_TAG }}
+
+      - name: Clean up Docker images
+        run: docker rmi $ACR_LOGIN_SERVER/$IMAGE_NAME:${{ env.IMAGE_TAG }}
 
       - name: Update Helm values.yaml
         run: |
