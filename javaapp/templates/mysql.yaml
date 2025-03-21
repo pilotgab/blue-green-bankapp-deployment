@@ -35,12 +35,7 @@ spec:
           volumeMounts:
             - name: mysql-persistent-storage
               mountPath: /var/lib/mysql
-  volumeClaimTemplates:
-    - metadata:
-        name: mysql-persistent-storage
-      spec:
-        accessModes: [ {{ .Values.mysql.persistence.accessMode }} ]
-        storageClassName: {{ .Values.mysql.persistence.storageClass | quote }}
-        resources:
-          requests:
-            storage: {{ .Values.mysql.persistence.size }}
+      volumes:
+        - name: mysql-persistent-storage
+          persistentVolumeClaim:
+            claimName: mysql-persistent-storage-mysql-0
