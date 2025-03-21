@@ -19,7 +19,7 @@ deployment:
     app: bankapp
   image:
     repository: javaapplicationacr.azurecr.io/java-app
-    tag: eead4c5
+    tag: 9041e0e
   containerPort: 8080
   env:
     datasourceUrl: jdbc:mysql://mysql-service:3306/bankappdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
