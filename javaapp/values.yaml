@@ -1,9 +1,11 @@
 namespace: apps
+
 ingress:
   name: bank-app-ingress
   host: bankapp.gabapp.tech
   serviceName: bankapp-service
   servicePort: 80
+
 service:
   name: bankapp-service
   type: ClusterIP
@@ -12,6 +14,7 @@ service:
   selector:
     app: bankapp
     version: blue
+
 deployment:
   name: bankapp-blue
   replicas: 1
@@ -32,6 +35,7 @@ deployment:
     limits:
       memory: "1000Mi"
       cpu: "1000m"
+
 mysql:
   name: mysql
   image:
@@ -52,5 +56,5 @@ mysql:
   persistence:
     enabled: true
     accessMode: ReadWriteOnce
-    size: 10Gi
+    size: 2Gi
     storageClass: ""
