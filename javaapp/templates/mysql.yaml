@@ -8,7 +8,7 @@ spec:
     matchLabels:
       app: {{ .Values.mysql.name }}
   serviceName: {{ .Values.mysql.service.name }}
-  replicas: 1
+  replicas: 3
   template:
     metadata:
       labels:
