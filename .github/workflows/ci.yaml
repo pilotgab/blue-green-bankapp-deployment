@@ -17,8 +17,8 @@ env:
 jobs:
   feature-tests:
     if: github.ref == 'refs/heads/feature'
-    continue-on-error: true
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -89,8 +89,8 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Build artifact (Jar)
-        run: mvn clean package --batch-mode
+      - name: Build artifact (Jar) without tests
+        run: mvn clean install -DskipTests --batch-mode
 
       - name: Verify JAR exists
         run: ls -lh target/*.jar
