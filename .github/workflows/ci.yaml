@@ -3,7 +3,7 @@ name: Java CI/CD Pipeline
 on:
   push:
     branches:
-      - "feature/**"
+      - "feature"
       - "main"
   pull_request:
     branches:
@@ -16,7 +16,7 @@ env:
 
 jobs:
   feature-tests:
-    if: startsWith(github.ref, 'refs/heads/feature/')
+    if: github.ref == 'refs/heads/feature'
     continue-on-error: true
     runs-on: ubuntu-latest
     steps:
@@ -69,7 +69,7 @@ jobs:
         run: mvn package --batch-mode
 
   publish-image:
-    if: github.ref == 'refs/heads/main/'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -113,7 +113,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git checkout -b feature/auto-update-helm
+          git checkout main
           git add $HELM_VALUES_FILE
           git commit -m "chore: update image tag to ${{ env.IMAGE_TAG }} in helm values.yaml"
-          git push origin feature/auto-update-helm
+          git push origin HEAD:main
