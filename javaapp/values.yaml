@@ -11,12 +11,13 @@ service:
   targetPort: 8080
   selector:
     app: bankapp
-    version: blue
+    version: green
 deployment:
   name: bankapp-blue
   replicas: 1
   selector:
     app: bankapp
+    version: green
   image:
     repository: javaapplicationacr.azurecr.io/java-app
     tag: "df03b51"
