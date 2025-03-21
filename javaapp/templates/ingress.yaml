@@ -1,31 +1,32 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: { { .Values.ingress.name } }
-  namespace: { { .Values.namespace } }
+  name: {{ .Values.ingress.name }}
+  namespace: {{ .Values.namespace }}
   labels:
-    name: { { .Values.ingress.name } }
+    name: {{ .Values.ingress.name }}
 spec:
   rules:
-    - host: { { .Values.ingress.host } }
+    - host: {{ .Values.ingress.host }}
       http:
         paths:
           - pathType: Prefix
             path: "/"
             backend:
               service:
-                name: { { .Values.ingress.serviceName } }
+                name: {{ .Values.ingress.serviceName }}
                 port:
-                  number: { { .Values.ingress.servicePort } }
+                  number: {{ .Values.ingress.servicePort }}
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: { { .Values.mysql.service.name } }
-  namespace: { { .Values.namespace } }
+  name: {{ .Values.mysql.service.name }}
+  namespace: {{ .Values.namespace }}
 spec:
   ports:
-    - port: { { .Values.mysql.service.port } }
+    - port: {{ .Values.mysql.service.port }}
   selector:
-    app: { { .Values.mysql.name } }
+    app: {{ .Values.mysql.name }}
   clusterIP: None
