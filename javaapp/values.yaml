@@ -1,7 +1,7 @@
 namespace: apps
 ingress:
   name: bank-app-ingress
-  host: bankapp.gabapp.tech
+  host: ubank.gabapp.tech
   serviceName: bankapp-service
   servicePort: 80
 service:
