@@ -8,5 +8,5 @@ roleRef:
   name: prometheus-role
 subjects:
   - kind: ServiceAccount
-    name: prometheus-sa
+    name: kube-prometheus-stack-prometheus
     namespace: monitoring
