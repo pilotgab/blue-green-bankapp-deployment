@@ -21,22 +21,6 @@ chart:
               name: cloudflare-credentials
               key: apikey
 
-      initContainers:
-        - name: volume-permissions
-          image: busybox:latest
-          securityContext:
-            runAsUser: 0
-            privileged: true
-          command:
-            [
-              "sh",
-              "-c",
-              "mkdir -p /ssl-certs; chown -R 65532:65532 /ssl-certs; touch /ssl-certs/acme-cloudflare.json; chmod 600 /ssl-certs/acme-cloudflare.json",
-            ]
-          volumeMounts:
-            - name: ssl-certs
-              mountPath: /ssl-certs
-
       podSecurityContext:
         fsGroup: 65532
         runAsUser: 65532
