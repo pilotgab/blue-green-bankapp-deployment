@@ -53,5 +53,5 @@ mysql:
   persistence:
     enabled: true
     accessMode: ReadWriteOnce
-    size: 5Gi
+    size: 1Gi
     storageClass: managed-premium
