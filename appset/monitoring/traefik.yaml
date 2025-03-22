@@ -5,59 +5,65 @@ chart:
   name: traefik
   releaseName: traefik
   repoURL: https://traefik.github.io/charts
-  targetRevision: v34.1.0
+  targetRevision: v34.4.1
   values: |
     additionalArguments:
       - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
       - --certificatesresolvers.cloudflare.acme.email=gabidachaba@gmail.com
       - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1
       - --certificatesresolvers.cloudflare.acme.storage=/ssl-certs/acme-cloudflare.json
-    env:
-      - name: CF_API_KEY
-        valueFrom:
-          secretKeyRef:
-            name: cloudflare-credentials
-            key: apikey
-    logs:
-      general:
-        level: "ERROR"
-    ports:
-      web:
-        redirectTo: websecure
-      websecure:
-        tls:
+
+  env:
+    - name: CF_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: cloudflare-credentials
+          key: apikey
+
+  logs:
+    general:
+      level: "ERROR"
+
+  ports:
+    web:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+          tls:
           enabled: true
           certResolver: cloudflare
 
-    persistence:
-      enabled: true
-      name: ssl-certs
-      persistentVolumeClaim:
-        claimName: ssl-certs
-      path: /ssl-certs
+  persistence:
+    enabled: true
+    name: ssl-certs
+    size: 2Gi
+    accessMode: ReadWriteOnce
+    storageClassName: managed-premium
+    path: /ssl-certs
 
-    deployment:
-      initContainers:
-        - name: volume-permissions
-          image: busybox:latest
-          command: ["sh", "-c", "touch /ssl-certs/acme-cloudflare.json; chmod -Rv 600 /ssl-certs/acme-cloudflare.json"]
+  deployment:
+    initContainers:
+      - name: volume-permissions
+        image: busybox:latest
+        command:
+          [
+            "sh",
+            "-c",
+            "touch /ssl-certs/acme-cloudflare.json; chmod -Rv 600 /ssl-certs/acme-cloudflare.json",
+          ]
         volumeMounts:
-         - name: ssl-certs
-           mountPath: /ssl-certs
+        - name: ssl-certs
+          mountPath: /ssl-certs
 
-    volumes:
-      - name: ssl-certs
-        persistentVolumeClaim:
-          claimName: ssl-certs
+  ingressClass:
+    enabled: true
+    isDefaultClass: true
 
-    ingressClass:
-      enabled: true
-      isDefaultClass: true
-
-    resources:
-            requests:
-              cpu: 250m
-              memory: 256Mi
-            limits:
-              cpu: "500m"
-              memory: 512Mi
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: "500m"
+      memory: 512Mi

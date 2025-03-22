@@ -11,9 +11,8 @@ chart:
       replicaCount: 1
       serviceAccount:
         name: external-secrets
-        create: false
+        create: true
         namespace: external-secrets
-        annotations:
-          eks.amazonaws.com/role-arn: arn:aws:iam::345594590281:role/secret-mg-sa-role
+
     logs:
       level: info

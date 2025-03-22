@@ -151,4 +151,3 @@ jobs:
           git add $HELM_VALUES_FILE
           git commit -m "chore: update image tag to ${{ env.IMAGE_TAG }} in helm values.yaml"
           git push origin HEAD:main
-
