@@ -18,15 +18,3 @@ spec:
                 port:
                   number: {{ .Values.ingress.servicePort }}
 ---
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ .Values.mysql.service.name }}
-  namespace: {{ .Values.namespace }}
-spec:
-  ports:
-    - port: {{ .Values.mysql.service.port }}
-  selector:
-    app: {{ .Values.mysql.name }}
-  clusterIP: None
