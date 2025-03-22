@@ -25,8 +25,8 @@ chart:
         - name: volume-permissions
           image: busybox:latest
           securityContext:
-            runAsUser: 65532
-            runAsGroup: 65532
+            runAsUser: 0
+            privileged: true
           command:
             [
               "sh",
@@ -42,7 +42,6 @@ chart:
         runAsUser: 65532
         runAsGroup: 65532
         runAsNonRoot: true
-
 
     logs:
       general:

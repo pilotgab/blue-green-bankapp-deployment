@@ -6,7 +6,8 @@ provisioner: disk.csi.azure.com
 parameters:
   skuName: Premium_LRS
   kind: Managed
-  cachingMode: ReadOnly
+  cachingMode: None
+  fsType: ext4
 reclaimPolicy: Delete
 volumeBindingMode: WaitForFirstConsumer
 allowVolumeExpansion: true
