@@ -3,5 +3,3 @@ kind: ServiceAccount
 metadata:
   name: prometheus-sa
   namespace: monitoring
-  annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::345594590281:role/prom-role
