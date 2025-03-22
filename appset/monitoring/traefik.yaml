@@ -25,13 +25,13 @@ chart:
         - name: volume-permissions
           image: busybox:latest
           securityContext:
-            runAsUser: 0
-            runAsGroup: 0
+            runAsUser: 65532
+            runAsGroup: 65532
           command:
             [
               "sh",
               "-c",
-              "touch /ssl-certs/acme-cloudflare.json; chmod -Rv 600 /ssl-certs/acme-cloudflare.json",
+              "mkdir -p /ssl-certs; chown -R 65532:65532 /ssl-certs; touch /ssl-certs/acme-cloudflare.json; chmod 600 /ssl-certs/acme-cloudflare.json",
             ]
           volumeMounts:
             - name: ssl-certs
@@ -39,6 +39,10 @@ chart:
 
       podSecurityContext:
         fsGroup: 65532
+        runAsUser: 65532
+        runAsGroup: 65532
+        runAsNonRoot: true
+
 
     logs:
       general:
