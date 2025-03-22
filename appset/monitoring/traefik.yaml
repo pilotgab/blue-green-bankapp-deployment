@@ -14,12 +14,31 @@ chart:
       - --certificatesresolvers.cloudflare.acme.storage=/ssl-certs/acme-cloudflare.json
 
     deployment:
-        additionalEnvs:
-          - name: CF_API_KEY
-            valueFrom:
-              secretKeyRef:
-                name: cloudflare-credentials
-                key: apikey
+      additionalEnvs:
+        - name: CF_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: cloudflare-credentials
+              key: apikey
+
+      initContainers:
+        - name: volume-permissions
+          image: busybox:latest
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+          command:
+            [
+              "sh",
+              "-c",
+              "touch /ssl-certs/acme-cloudflare.json; chmod -Rv 600 /ssl-certs/acme-cloudflare.json",
+            ]
+          volumeMounts:
+            - name: ssl-certs
+              mountPath: /ssl-certs
+
+      podSecurityContext:
+        fsGroup: 65532
 
     logs:
       general:
@@ -42,20 +61,6 @@ chart:
       accessMode: ReadWriteOnce
       storageClassName: managed-premium
       path: /ssl-certs
-
-    deployment:
-      initContainers:
-        - name: volume-permissions
-          image: busybox:latest
-          command:
-            [
-              "sh",
-              "-c",
-              "touch /ssl-certs/acme-cloudflare.json; chmod -Rv 600 /ssl-certs/acme-cloudflare.json",
-            ]
-          volumeMounts:
-            - name: ssl-certs
-              mountPath: /ssl-certs
 
     ingressClass:
       enabled: true
