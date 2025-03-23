@@ -26,7 +26,7 @@ chart:
           image: busybox
           command: ["sh", "-c", "chown -R 65532:65532 /ssl-certs && chmod -R 700 /ssl-certs"]
           securityContext:
-            runAsUser: 0
+            privileged: true
           volumeMounts:
             - mountPath: /ssl-certs
               name: ssl-certs
