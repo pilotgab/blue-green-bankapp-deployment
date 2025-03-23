@@ -56,8 +56,8 @@ chart:
       enabled: true
       name: ssl-certs
       size: 1Gi
-      accessMode: ReadWriteOnce
-      storageClass: managed-premium
+      accessMode: ReadWriteMany
+      storageClass: azurefile-premium
       path: /ssl-certs
 
     ingressClass:
