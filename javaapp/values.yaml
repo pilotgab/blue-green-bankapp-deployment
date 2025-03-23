@@ -52,6 +52,6 @@ mysql:
       cpu: "1000m"
   persistence:
     enabled: true
-    accessMode: ReadWriteMany
+    accessMode: ReadWriteOnce
     size: 1Gi
-    storageClass: azurefile-premium
+    storageClass: managed-premium
