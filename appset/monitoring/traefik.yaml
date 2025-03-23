@@ -15,11 +15,11 @@ chart:
 
     deployment:
       additionalEnvs:
-        - name: CF_API_KEY
+        - name: CF_API_TOKEN
           valueFrom:
             secretKeyRef:
               name: cloudflare-credentials
-              key: apikey
+              key: apitoken
 
       podSecurityContext:
         fsGroup: 65532
