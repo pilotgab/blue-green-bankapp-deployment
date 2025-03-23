@@ -17,4 +17,3 @@ spec:
                 name: {{ .Values.ingress.serviceName }}
                 port:
                   number: {{ .Values.ingress.servicePort }}
----
