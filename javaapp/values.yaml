@@ -52,5 +52,6 @@ mysql:
       cpu: "1000m"
   persistence:
     enabled: true
+    storageClass: managed-csi
     accessMode: ReadWriteOnce
     size: 1Gi
