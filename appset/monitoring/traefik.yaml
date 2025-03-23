@@ -25,6 +25,8 @@ chart:
         - name: fix-permissions
           image: busybox
           command: ["sh", "-c", "chown -R 65532:65532 /ssl-certs && chmod -R 700 /ssl-certs"]
+          securityContext:
+            runAsUser: 0
           volumeMounts:
             - mountPath: /ssl-certs
               name: ssl-certs
@@ -62,6 +64,261 @@ chart:
             tls:
             enabled: true
             certResolver: cloudflare
+
+    persistence:
+      enabled: true
+      name: ssl-certs
+      size: 2Gi
+      accessMode: ReadWriteOnce
+      storageClassName: managed-premium
+      path: /ssl-certs
+
+    ingressClass:
+      enabled: true
+      isDefaultClass: true
+
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        cpu: "500m"
+        memory: 512Miapplication: traefik
+clusterConfig:
+  namespace: traefik
+chart:
+  name: traefik
+  releaseName: traefik
+  repoURL: https://traefik.github.io/charts
+  targetRevision: v34.4.1
+  values: |
+    additionalArguments:
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
+      - --certificatesresolvers.cloudflare.acme.email=gabidachaba@gmail.com
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1
+      - --certificatesresolvers.cloudflare.acme.storage=/ssl-certs/acme-cloudflare.json
+
+    deployment:
+      additionalEnvs:
+        - name: CF_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: cloudflare-credentials
+              key: apikey
+
+      initContainers:
+        - name: fix-permissions
+          image: busybox
+          command: ["sh", "-c", "chown -R 65532:65532 /ssl-certs && chmod -R 700 /ssl-certs"]
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - mountPath: /ssl-certs
+              name: ssl-certs
+
+      podSecurityContext:
+        fsGroup: 65532
+        runAsUser: 65532
+        runAsGroup: 65532
+        runAsNonRoot: true
+        fsGroupChangePolicy: "Always"
+
+      readinessProbe:
+        failureThreshold: 1
+        exec:
+          command:
+            - sh
+            - -c
+            - |
+              curl -sf https://localhost:8443/ping && curl -sf http://localhost:8080/ping
+        initialDelaySeconds: 5
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+
+    logs:
+      general:
+        level: "ERROR"
+
+    ports:
+      web:
+        redirections:
+          entryPoint:
+            to: websecure
+            scheme: https
+            tls:
+            enabled: true
+            certResolver: cloudflare
+
+    persistence:
+      enabled: true
+      name: ssl-certs
+      size: 2Gi
+      accessMode: ReadWriteOnce
+      storageClassName: managed-premium
+      path: /ssl-certs
+
+    ingressClass:
+      enabled: true
+      isDefaultClass: true
+
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        cpu: "500m"
+        memory: 512Miapplication: traefik
+clusterConfig:
+  namespace: traefik
+chart:
+  name: traefik
+  releaseName: traefik
+  repoURL: https://traefik.github.io/charts
+  targetRevision: v34.4.1
+  values: |
+    additionalArguments:
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
+      - --certificatesresolvers.cloudflare.acme.email=gabidachaba@gmail.com
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1
+      - --certificatesresolvers.cloudflare.acme.storage=/ssl-certs/acme-cloudflare.json
+
+    deployment:
+      additionalEnvs:
+        - name: CF_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: cloudflare-credentials
+              key: apikey
+
+      initContainers:
+        - name: fix-permissions
+          image: busybox
+          command: ["sh", "-c", "chown -R 65532:65532 /ssl-certs && chmod -R 700 /ssl-certs"]
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - mountPath: /ssl-certs
+              name: ssl-certs
+
+      podSecurityContext:
+        fsGroup: 65532
+        runAsUser: 65532
+        runAsGroup: 65532
+        runAsNonRoot: true
+        fsGroupChangePolicy: "Always"
+
+      readinessProbe:
+        failureThreshold: 1
+        exec:
+          command:
+            - sh
+            - -c
+            - |
+              curl -sf https://localhost:8443/ping && curl -sf http://localhost:8080/ping
+        initialDelaySeconds: 5
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+
+    logs:
+      general:
+        level: "ERROR"
+
+    ports:
+      web:
+        redirections:
+          entryPoint:
+            to: websecure
+            scheme: https
+            tls:
+            enabled: true
+            certResolver: cloudflare
+
+    persistence:
+      enabled: true
+      name: ssl-certs
+      size: 2Gi
+      accessMode: ReadWriteOnce
+      storageClassName: managed-premium
+      path: /ssl-certs
+
+    ingressClass:
+      enabled: true
+      isDefaultClass: true
+
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        cpu: "500m"
+        memory: 512Miapplication: traefik
+clusterConfig:
+  namespace: traefik
+chart:
+  name: traefik
+  releaseName: traefik
+  repoURL: https://traefik.github.io/charts
+  targetRevision: v34.4.1
+  values: |
+    additionalArguments:
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
+      - --certificatesresolvers.cloudflare.acme.email=gabidachaba@gmail.com
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1
+      - --certificatesresolvers.cloudflare.acme.storage=/ssl-certs/acme-cloudflare.json
+
+    deployment:
+      additionalEnvs:
+        - name: CF_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: cloudflare-credentials
+              key: apikey
+
+      initContainers:
+        - name: fix-permissions
+          image: busybox
+          command: ["sh", "-c", "chown -R 65532:65532 /ssl-certs && chmod -R 700 /ssl-certs"]
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - mountPath: /ssl-certs
+              name: ssl-certs
+
+      podSecurityContext:
+        fsGroup: 65532
+        runAsUser: 65532
+        runAsGroup: 65532
+        runAsNonRoot: true
+        fsGroupChangePolicy: "Always"
+
+      readinessProbe:
+        failureThreshold: 1
+        exec:
+          command:
+            - sh
+            - -c
+            - |
+              curl -sf https://localhost:8443/ping && curl -sf http://localhost:8080/ping
+        initialDelaySeconds: 5
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 5
+
+    logs:
+      general:
+        level: "ERROR"
+
+    ports:
+      web:
+        redirections:
+          entryPoint:
+            to: websecure
+            scheme: https
+            tls:
+              enabled: true
+              certResolver: cloudflare
 
     persistence:
       enabled: true
