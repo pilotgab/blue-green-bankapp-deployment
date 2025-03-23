@@ -1,3 +1,4 @@
+application: traefik
 clusterConfig:
   namespace: traefik
 chart:
@@ -36,19 +37,6 @@ chart:
         runAsGroup: 65532
         runAsNonRoot: true
         fsGroupChangePolicy: "Always"
-
-      readinessProbe:
-        failureThreshold: 1
-        exec:
-          command:
-            - sh
-            - -c
-            - |
-              curl -sf https://localhost:8443/ping && curl -sf http://localhost:8080/ping
-        initialDelaySeconds: 5
-        periodSeconds: 10
-        successThreshold: 1
-        timeoutSeconds: 5
 
     logs:
       general:
