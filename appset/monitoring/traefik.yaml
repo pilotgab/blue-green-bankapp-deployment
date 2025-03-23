@@ -325,7 +325,7 @@ chart:
       name: ssl-certs
       size: 2Gi
       accessMode: ReadWriteOnce
-      storageClassName: managed-premium
+      storageClass: managed-premium
       path: /ssl-certs
 
     ingressClass:
