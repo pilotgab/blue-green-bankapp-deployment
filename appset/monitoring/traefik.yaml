@@ -7,33 +7,6 @@ chart:
   repoURL: https://traefik.github.io/charts
   targetRevision: v34.4.1
   values: |
-    persistence:
-      enabled: true
-      name: ssl-certs
-      type: pvc
-      accessMode: ReadWriteOnce
-      size: 1Gi
-      storageClass: managed-csi
-      path: /ssl-certs
-
-    deployment:
-      initContainers:
-        - name: fix-permissions
-          image: busybox
-          command: ["sh", "-c", "chown -R 65532:65532 /ssl-certs && chmod -R 700 /ssl-certs"]
-          securityContext:
-            runAsUser: 0
-          volumeMounts:
-            - mountPath: /ssl-certs
-              name: ssl-certs
-
-      podSecurityContext:
-        fsGroup: 65532
-        runAsUser: 65532
-        runAsGroup: 65532
-        runAsNonRoot: true
-        fsGroupChangePolicy: "Always"
-
     additionalArguments:
       - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
       - --certificatesresolvers.cloudflare.acme.email=gabidachaba@gmail.com
@@ -48,13 +21,49 @@ chart:
               name: cloudflare-credentials
               key: apikey
 
-    ingressClass:
-      enabled: true
-      isDefaultClass: true
+      initContainers:
+        - name: fix-permissions
+          image: busybox
+          command: ["sh", "-c", "chown -R 65532:65532 /ssl-certs && chmod -R 700 /ssl-certs"]
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - mountPath: /ssl-certs
+              name: ssl-certs
+
+      podSecurityContext:
+        fsGroup: 65532
+        runAsUser: 65532
+        runAsGroup: 65532
+        runAsNonRoot: true
+        fsGroupChangePolicy: "Always"
 
     logs:
       general:
         level: "ERROR"
+
+    ports:
+      web:
+        redirections:
+          entryPoint:
+            to: websecure
+            scheme: https
+            tls:
+              enabled: true
+              certResolver: cloudflare
+
+    persistence:
+      enabled: true
+      name: ssl-certs
+      type: pvc
+      accessMode: ReadWriteOnce
+      size: 1Gi
+      storageClass: managed-csi
+      path: /ssl-certs
+
+    ingressClass:
+      enabled: true
+      isDefaultClass: true
 
     resources:
       requests:
