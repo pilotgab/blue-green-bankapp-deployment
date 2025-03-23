@@ -49,8 +49,8 @@ chart:
             to: websecure
             scheme: https
             tls:
-            enabled: true
-            certResolver: cloudflare
+              enabled: true
+              certResolver: cloudflare
 
     persistence:
       enabled: true
