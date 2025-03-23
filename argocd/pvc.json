@@ -1,0 +1,52 @@
+{
+    "apiVersion": "v1",
+    "kind": "PersistentVolumeClaim",
+    "metadata": {
+        "annotations": {
+            "helm.sh/resource-policy": "keep",
+            "pv.kubernetes.io/bind-completed": "yes",
+            "pv.kubernetes.io/bound-by-controller": "yes",
+            "volume.beta.kubernetes.io/storage-provisioner": "disk.csi.azure.com",
+            "volume.kubernetes.io/selected-node": "aks-stagenp-14197086-vmss000001",
+            "volume.kubernetes.io/storage-provisioner": "disk.csi.azure.com"
+        },
+        "creationTimestamp": "2025-03-23T17:00:49Z",
+        "deletionGracePeriodSeconds": 0,
+        "deletionTimestamp": "2025-03-23T17:59:13Z",
+        "finalizers": [
+            "kubernetes.io/pvc-protection"
+        ],
+        "labels": {
+            "app.kubernetes.io/instance": "traefik",
+            "app.kubernetes.io/managed-by": "Helm",
+            "app.kubernetes.io/name": "traefik",
+            "helm.sh/chart": "traefik-34.4.1"
+        },
+        "name": "traefik",
+        "namespace": "traefik",
+        "resourceVersion": "25186",
+        "uid": "7e58ec39-066c-497b-9dff-a795a07e2327"
+    },
+    "spec": {
+        "accessModes": [
+            "ReadWriteOnce"
+        ],
+        "resources": {
+            "requests": {
+                "storage": "128Mi"
+            }
+        },
+        "storageClassName": "default",
+        "volumeMode": "Filesystem",
+        "volumeName": "pvc-7e58ec39-066c-497b-9dff-a795a07e2327"
+    },
+    "status": {
+        "accessModes": [
+            "ReadWriteOnce"
+        ],
+        "capacity": {
+            "storage": "1Gi"
+        },
+        "phase": "Bound"
+    }
+}
