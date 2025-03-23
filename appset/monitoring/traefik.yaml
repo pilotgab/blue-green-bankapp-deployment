@@ -30,7 +30,7 @@ chart:
 
     logs:
       general:
-        level: "ERROR"
+        level: "DEBUG"
 
     ports:
       web:
