@@ -21,11 +21,20 @@ chart:
               name: cloudflare-credentials
               key: apikey
 
+      initContainers:
+        - name: fix-permissions
+          image: busybox
+          command: ["sh", "-c", "chown -R 65532:65532 /ssl-certs && chmod -R 700 /ssl-certs"]
+          volumeMounts:
+            - mountPath: /ssl-certs
+              name: ssl-certs
+
       podSecurityContext:
         fsGroup: 65532
         runAsUser: 65532
         runAsGroup: 65532
         runAsNonRoot: true
+        fsGroupChangePolicy: "Always"
 
       readinessProbe:
         failureThreshold: 1
