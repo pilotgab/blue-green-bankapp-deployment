@@ -40,7 +40,6 @@ spec:
         name: mysql-storage
       spec:
         accessModes: [ {{ .Values.mysql.persistence.accessMode }} ]
-        storageClassName: {{ .Values.mysql.persistence.storageClass | quote }}
         resources:
           requests:
             storage: {{ .Values.mysql.persistence.size }}

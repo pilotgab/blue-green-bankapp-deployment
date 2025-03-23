@@ -54,4 +54,3 @@ mysql:
     enabled: true
     accessMode: ReadWriteOnce
     size: 1Gi
-    storageClass: managed-premium
