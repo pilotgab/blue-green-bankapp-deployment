@@ -17,7 +17,6 @@ chart:
       - "--entryPoints.web.http.redirections.entryPoint.to=websecure"
       - "--entryPoints.web.http.redirections.entryPoint.scheme=https"
       - "--entryPoints.web.http.redirections.entryPoint.permanent=true"
-      - --providers.kubernetesIngress
 
     env:
       - name: CF_API_EMAIL
