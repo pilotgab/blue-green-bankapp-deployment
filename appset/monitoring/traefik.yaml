@@ -51,7 +51,7 @@ chart:
               mountPath: /ssl-certs
     logs:
       general:
-        level: "DEBUG"
+        level: "D"
     ingressRoute:
       dashboard:
         enabled: false
