@@ -41,6 +41,18 @@ chart:
         runAsNonRoot: true
         fsGroupChangePolicy: "Always"
 
+      initContainers:
+        - name: fix-permissions
+          image: busybox
+          command:
+            - sh
+            - -c
+            - "mkdir -p /ssl-certs && chown -R 65532:65532 /ssl-certs && chmod -R 700 /ssl-certs"
+          volumeMounts:
+            - name: ssl-certs
+              mountPath: /ssl-certs
+
+
     logs:
       general:
         level: "ERROR"
