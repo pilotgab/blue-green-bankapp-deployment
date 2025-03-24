@@ -8,7 +8,7 @@ service:
   name: bankapp-service
   type: ClusterIP
   port: 80
-  targetPort: 8082
+  targetPort: 8080
   selector:
     app: bankapp
     version: green
@@ -21,7 +21,7 @@ deployment:
   image:
     repository: javaapplicationacr.azurecr.io/java-app
     tag: "76c59d5"
-  containerPort: 8082
+  containerPort: 8080
   env:
     datasourceUrl: jdbc:mysql://mysql-service:3306/bankappdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     datasourceUser: root
