@@ -6,6 +6,7 @@ metadata:
   labels:
     name: {{ .Values.ingress.name }}
 spec:
+  ingressClassName: traefik
   rules:
     - host: {{ .Values.ingress.host }}
       http:
