@@ -71,12 +71,6 @@ chart:
         cpu: "500m"
         memory: 512Mi
 
-    securityContext:
-      capabilities:
-        add: ["NET_BIND_SERVICE"]
-      runAsNonRoot: true
-      runAsUser: 65532
-
     service:
       enabled: true
       type: LoadBalancer
