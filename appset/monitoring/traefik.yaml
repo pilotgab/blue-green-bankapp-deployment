@@ -13,9 +13,15 @@ chart:
       - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53
       - --certificatesresolvers.cloudflare.acme.dnschallenge.delaybeforecheck=0
       - --certificatesresolvers.cloudflare.acme.storage=/ssl-certs/acme-cloudflare.json
+      - --certificatesresolvers.cloudflare.acme.caServer=https://acme-v02.api.letsencrypt.org/directory
+      - --certificatesresolvers.cloudflare.acme.certificatesduration=2160h
+      - --certificatesresolvers.cloudflare.acme.domains=*.gabapp.tech
       - "--entryPoints.web.http.redirections.entryPoint.to=websecure"
       - "--entryPoints.web.http.redirections.entryPoint.scheme=https"
       - "--entryPoints.web.http.redirections.entryPoint.permanent=true"
+      - --providers.kubernetesIngress
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
 
     env:
       - name: CF_API_EMAIL
@@ -66,3 +72,15 @@ chart:
       limits:
         cpu: "500m"
         memory: 512Mi
+
+    service:
+      enabled: true
+      type: LoadBalancer
+      annotations:
+        service.beta.kubernetes.io/azure-load-balancer-resource-group: "stage-pilotgab-rg-nrg"
+        service.beta.kubernetes.io/azure-load-balancer-internal: "false"
+      ports:
+        web:
+          port: 80
+        websecure:
+          port: 443
