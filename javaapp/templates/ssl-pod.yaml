@@ -1,23 +1,23 @@
-apiVersion: v1
-kind: Pod
-metadata:
-  name: init-ssl-certs
-  namespace: traefik
-spec:
-  containers:
-    - name: init
-      image: busybox
-      command:
-        [
-          "sh",
-          "-c",
-          "mkdir -p /ssl-certs && chown -R 65532:65532 /ssl-certs && chmod -R 700 /ssl-certs",
-        ]
-      volumeMounts:
-        - mountPath: /ssl-certs
-          name: ssl-certs
-  volumes:
-    - name: ssl-certs
-      persistentVolumeClaim:
-        claimName: traefik
-  restartPolicy: Never
+# apiVersion: v1
+# kind: Pod
+# metadata:
+#   name: init-ssl-certs
+#   namespace: traefik
+# spec:
+#   containers:
+#     - name: init
+#       image: busybox
+#       command:
+#         [
+#           "sh",
+#           "-c",
+#           "mkdir -p /ssl-certs && chown -R 65532:65532 /ssl-certs && chmod -R 700 /ssl-certs",
+#         ]
+#       volumeMounts:
+#         - mountPath: /ssl-certs
+#           name: ssl-certs
+#   volumes:
+#     - name: ssl-certs
+#       persistentVolumeClaim:
+#         claimName: traefik
+#   restartPolicy: Never
