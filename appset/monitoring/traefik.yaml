@@ -10,7 +10,8 @@ chart:
     additionalArguments:
       - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
       - --certificatesresolvers.cloudflare.acme.email=gabidachaba@gmail.com
-      - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.delaybeforecheck=0
       - --certificatesresolvers.cloudflare.acme.storage=/ssl-certs/acme-cloudflare.json
 
     deployment:
@@ -19,7 +20,7 @@ chart:
           valueFrom:
             secretKeyRef:
               name: cloudflare-credentials
-              key: dns_api_token
+              key: CLOUDFLARE_DNS_API_TOKEN
 
       podSecurityContext:
         fsGroup: 65532
