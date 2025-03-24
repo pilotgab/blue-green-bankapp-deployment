@@ -1,11 +1,9 @@
 namespace: apps
-
 ingress:
   name: bank-app-ingress
   host: ubank.gabapp.tech
   serviceName: bankapp-service
   servicePort: 80
-
 service:
   name: bankapp-service
   type: ClusterIP
@@ -14,7 +12,6 @@ service:
   selector:
     app: bankapp
     version: green
-
 deployment:
   name: bankapp-green
   replicas: 1
@@ -23,7 +20,7 @@ deployment:
     version: green
   image:
     repository: javaapplicationacr.azurecr.io/java-app
-    tag: 8e3e4c3
+    tag: e947279
   containerPort: 8082
   env:
     datasourceUrl: jdbc:mysql://mysql-service:3306/bankappdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
@@ -36,7 +33,6 @@ deployment:
     limits:
       memory: "1000Mi"
       cpu: "1000m"
-
 mysql:
   name: mysql
   image:
@@ -54,7 +50,6 @@ mysql:
     limits:
       memory: "2Gi"
       cpu: "1000m"
-
   persistence:
     enabled: true
     storageClass: managed-csi
