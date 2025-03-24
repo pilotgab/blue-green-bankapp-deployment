@@ -13,6 +13,9 @@ chart:
       - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53
       - --certificatesresolvers.cloudflare.acme.dnschallenge.delaybeforecheck=0
       - --certificatesresolvers.cloudflare.acme.storage=/ssl-certs/acme-cloudflare.json
+      - "--entryPoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entryPoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entryPoints.web.http.redirections.entryPoint.permanent=true"
 
     env:
       - name: CF_API_EMAIL
@@ -38,14 +41,6 @@ chart:
     logs:
       general:
         level: "DEBUG"
-
-    ports:
-      web:
-        redirectTo: websecure
-      websecure:
-        tls:
-          enabled: true
-          certResolver: cloudflare
 
     ingressRoute:
       dashboard:
