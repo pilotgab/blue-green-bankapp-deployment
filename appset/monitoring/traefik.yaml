@@ -40,7 +40,7 @@ chart:
 
     logs:
       general:
-        level: "DEBUG"
+        level: "ERROR"
 
     ingressRoute:
       dashboard:
