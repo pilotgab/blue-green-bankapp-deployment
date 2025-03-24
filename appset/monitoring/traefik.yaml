@@ -22,13 +22,13 @@ chart:
             key: email
 
       - name: CF_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: cloudflare-credentials
-              key: apikey
+        valueFrom:
+          secretKeyRef:
+            name: cloudflare-credentials
+            key: apikey
 
     deployment:
-      - podSecurityContext:
+      podSecurityContext:
         fsGroup: 65532
         runAsUser: 65532
         runAsGroup: 65532
