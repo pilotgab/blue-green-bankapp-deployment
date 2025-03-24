@@ -15,7 +15,6 @@ chart:
       - --certificatesresolvers.cloudflare.acme.storage=/ssl-certs/acme-cloudflare.json
       - --certificatesresolvers.cloudflare.acme.caServer=https://acme-v02.api.letsencrypt.org/directory
       - --certificatesresolvers.cloudflare.acme.certificatesduration=2160h
-      - --certificatesresolvers.cloudflare.acme.domains=*.gabapp.tech
       - "--entryPoints.web.http.redirections.entryPoint.to=websecure"
       - "--entryPoints.web.http.redirections.entryPoint.scheme=https"
       - "--entryPoints.web.http.redirections.entryPoint.permanent=true"
