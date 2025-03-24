@@ -17,6 +17,8 @@ chart:
       - "--entryPoints.web.http.redirections.entryPoint.to=websecure"
       - "--entryPoints.web.http.redirections.entryPoint.scheme=https"
       - "--entryPoints.web.http.redirections.entryPoint.permanent=true"
+      - --entryPoints.web.address=:80
+      - --entryPoints.websecure.address=:443
 
     env:
       - name: CF_API_EMAIL
@@ -74,3 +76,10 @@ chart:
       annotations:
         service.beta.kubernetes.io/azure-load-balancer-resource-group: "stage-pilotgab-rg-nrg"
         service.beta.kubernetes.io/azure-load-balancer-internal: "false"
+      ports:
+        - port: 80
+          targetPort: 8000
+          name: web
+        - port: 443
+          targetPort: 8443
+          name: websecure
