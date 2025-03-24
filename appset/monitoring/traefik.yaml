@@ -14,15 +14,21 @@ chart:
       - --certificatesresolvers.cloudflare.acme.dnschallenge.delaybeforecheck=0
       - --certificatesresolvers.cloudflare.acme.storage=/ssl-certs/acme-cloudflare.json
 
-    deployment:
-      additionalEnvs:
-        - name: CLOUDFLARE_DNS_API_TOKEN
+    env:
+      - name: CF_API_EMAIL
+        valueFrom:
+          secretKeyRef:
+            name: cloudflare-credentials
+            key: email
+
+      - name: CF_API_KEY
           valueFrom:
             secretKeyRef:
               name: cloudflare-credentials
-              key: CLOUDFLARE_DNS_API_TOKEN
+              key: apikey
 
-      podSecurityContext:
+    deployment:
+      - podSecurityContext:
         fsGroup: 65532
         runAsUser: 65532
         runAsGroup: 65532
@@ -35,13 +41,15 @@ chart:
 
     ports:
       web:
-        redirections:
-          entryPoint:
-            to: websecure
-            scheme: https
-            tls:
-              enabled: true
-              certResolver: cloudflare
+        redirectTo: websecure
+      websecure:
+        tls:
+          enabled: true
+          certResolver: cloudflare
+
+    ingressRoute:
+      dashboard:
+        enabled: false
 
     persistence:
       enabled: true
