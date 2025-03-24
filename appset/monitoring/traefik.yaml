@@ -18,7 +18,7 @@ chart:
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
       - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
       - "--entrypoints.web.address=:8000"
-      - "--entrypoints.websecure.address=:8443"
+      - "--entrypoints.websecure.address=:443"
       - "--entrypoints.websecure.http.tls.certresolver=cloudflare"
       - "--providers.kubernetesingress.ingressclass=traefik"
     env:
