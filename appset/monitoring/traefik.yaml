@@ -78,8 +78,8 @@ chart:
         service.beta.kubernetes.io/azure-load-balancer-internal: "false"
       ports:
         - port: 80
-          targetPort: 8000
+          targetPort: 80
           name: web
         - port: 443
-          targetPort: 8443
+          targetPort: 443
           name: websecure
