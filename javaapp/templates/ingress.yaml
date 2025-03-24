@@ -5,16 +5,16 @@ metadata:
   namespace: {{ .Values.namespace }}
   labels:
     name: {{ .Values.ingress.name }}
-  annotations:
-    traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/router.tls.certresolver: cloudflare
+  # annotations:
+  #   traefik.ingress.kubernetes.io/router.tls: "true"
+  #   traefik.ingress.kubernetes.io/router.tls.certresolver: cloudflare
 spec:
   rules:
     - host: {{ .Values.ingress.host }}
       http:
         paths:
           - pathType: Prefix
-            path: "/"
+            path: /
             backend:
               service:
                 name: {{ .Values.ingress.serviceName }}
