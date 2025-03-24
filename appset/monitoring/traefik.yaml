@@ -19,20 +19,20 @@ chart:
       - "--entryPoints.web.http.redirections.entryPoint.permanent=true"
       - "--entryPoints.web.address=:8000"
       - "--entryPoints.websecure.address=:8443"
-
+      - "--entryPoints.websecure.http.tls.certResolver=cloudflare"
+      - "--providers.kubernetesingress.defaultendpoint=websecure"
+      - "--providers.kubernetesingress.ingressclass=traefik"
     env:
       - name: CF_API_EMAIL
         valueFrom:
           secretKeyRef:
             name: cloudflare-credentials
             key: email
-
       - name: CF_API_KEY
         valueFrom:
           secretKeyRef:
             name: cloudflare-credentials
             key: apikey
-
     deployment:
       podSecurityContext:
         fsGroup: 65532
@@ -40,7 +40,6 @@ chart:
         runAsGroup: 65532
         runAsNonRoot: true
         fsGroupChangePolicy: "Always"
-
       initContainers:
         - name: fix-permissions
           image: busybox
@@ -51,16 +50,12 @@ chart:
           volumeMounts:
             - name: ssl-certs
               mountPath: /ssl-certs
-
-
     logs:
       general:
         level: "ERROR"
-
     ingressRoute:
       dashboard:
         enabled: false
-
     persistence:
       enabled: true
       name: ssl-certs
@@ -69,11 +64,9 @@ chart:
       size: 1Gi
       storageClass: managed-csi
       path: /ssl-certs
-
     ingressClass:
       enabled: true
       isDefaultClass: true
-
     resources:
       requests:
         cpu: 250m
@@ -81,7 +74,6 @@ chart:
       limits:
         cpu: "500m"
         memory: 512Mi
-
     service:
       enabled: true
       type: LoadBalancer
