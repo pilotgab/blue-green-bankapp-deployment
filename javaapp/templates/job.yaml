@@ -32,5 +32,5 @@ spec:
   volumes:
     - name: data
       persistentVolumeClaim:
-        claimName: traefiki-pvc
+        claimName: traefik-pvc
   restartPolicy: Never
