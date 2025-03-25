@@ -5,7 +5,7 @@ chart:
   name: traefik
   releaseName: traefik
   repoURL: https://traefik.github.io/charts
-  targetRevision: v34.4.1
+  targetRevision: v3.3.4
   values: |
     additionalArguments:
       - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
