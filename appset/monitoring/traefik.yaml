@@ -43,6 +43,8 @@ chart:
         - name: volume-permissions
           image: busybox:latest
           command: ["sh", "-c", "touch /data/acme.json; chmod -Rv 600 /data/*"]
+          securityContext:
+            runAsUser: 0
           volumeMounts:
             - name: data
               mountPath: /data
