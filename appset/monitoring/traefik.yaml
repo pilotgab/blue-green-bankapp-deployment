@@ -4,8 +4,8 @@ clusterConfig:
 chart:
   name: traefik
   releaseName: traefik
-  repoURL: https://traefik.github.io/charts
-  targetRevision: v3.3.4
+  repoURL: https://github.com/traefik/traefik.git
+  targetRevision: "v3.3.4"
   values: |
     additionalArguments:
       - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
