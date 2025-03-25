@@ -14,23 +14,23 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: init-traefik-volume
+  name: init-data
   namespace: traefik
 spec:
   containers:
-    - name: permission-setter
-      image: busybox:latest
+    - name: init
+      image: busybox
       command:
-        - sh
-        - "-c"
-        - "touch /data/acme.json && chown 65532:65532 /data/acme.json && chmod 600 /data/acme.json"
+        [
+          "sh",
+          "-c",
+          "mkdir -p /data && chown -R 65532:65532 /data && chmod -R 700 /data",
+        ]
       volumeMounts:
-        - name: traefik-data-volume
-          mountPath: /data
-      securityContext:
-        runAsUser: 0
+        - mountPath: /data
+          name: data
   volumes:
-    - name: traefik-data-volume
+    - name: data
       persistentVolumeClaim:
-        claimName: traefik-pvc
+        claimName: traefiki-pvc
   restartPolicy: Never
