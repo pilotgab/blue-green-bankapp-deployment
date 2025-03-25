@@ -3,29 +3,26 @@
     "kind": "PersistentVolumeClaim",
     "metadata": {
         "annotations": {
-            "helm.sh/resource-policy": "keep",
+            "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"kind\":\"PersistentVolumeClaim\",\"metadata\":{\"annotations\":{},\"labels\":{\"app.kubernetes.io/instance\":\"bank-app\"},\"name\":\"traefik-pvc\",\"namespace\":\"traefik\"},\"spec\":{\"accessModes\":[\"ReadWriteOnce\"],\"resources\":{\"requests\":{\"storage\":\"1Gi\"}},\"storageClassName\":\"managed-csi\"}}\n",
             "pv.kubernetes.io/bind-completed": "yes",
             "pv.kubernetes.io/bound-by-controller": "yes",
             "volume.beta.kubernetes.io/storage-provisioner": "disk.csi.azure.com",
-            "volume.kubernetes.io/selected-node": "aks-stagenp-14197086-vmss000001",
+            "volume.kubernetes.io/selected-node": "aks-stagenp-68231684-vmss000001",
             "volume.kubernetes.io/storage-provisioner": "disk.csi.azure.com"
         },
-        "creationTimestamp": "2025-03-23T17:00:49Z",
+        "creationTimestamp": "2025-03-25T12:50:32Z",
         "deletionGracePeriodSeconds": 0,
-        "deletionTimestamp": "2025-03-23T17:59:13Z",
+        "deletionTimestamp": "2025-03-25T13:01:18Z",
         "finalizers": [
             "kubernetes.io/pvc-protection"
         ],
         "labels": {
-            "app.kubernetes.io/instance": "traefik",
-            "app.kubernetes.io/managed-by": "Helm",
-            "app.kubernetes.io/name": "traefik",
-            "helm.sh/chart": "traefik-34.4.1"
+            "app.kubernetes.io/instance": "bank-app"
         },
-        "name": "traefik",
+        "name": "traefik-pvc",
         "namespace": "traefik",
-        "resourceVersion": "25186",
-        "uid": "7e58ec39-066c-497b-9dff-a795a07e2327"
+        "resourceVersion": "213768",
+        "uid": "726965b2-ba11-4761-8e9a-93c19f767cf4"
     },
     "spec": {
         "accessModes": [
@@ -33,12 +30,12 @@
         ],
         "resources": {
             "requests": {
-                "storage": "128Mi"
+                "storage": "1Gi"
             }
         },
-        "storageClassName": "default",
+        "storageClassName": "managed-csi",
         "volumeMode": "Filesystem",
-        "volumeName": "pvc-7e58ec39-066c-497b-9dff-a795a07e2327"
+        "volumeName": "pvc-726965b2-ba11-4761-8e9a-93c19f767cf4"
     },
     "status": {
         "accessModes": [
