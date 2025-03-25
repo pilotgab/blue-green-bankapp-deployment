@@ -4,7 +4,7 @@ clusterConfig:
 chart:
   name: traefik
   releaseName: traefik
-  repoURL: https://github.com/traefik/traefik-helm-chart.git
+  repoURL: https://traefik.github.io/charts
   targetRevision: v34.4.1
   values: |
     additionalArguments:
