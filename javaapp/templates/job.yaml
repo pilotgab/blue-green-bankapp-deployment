@@ -1,38 +1,35 @@
-# apiVersion: v1
-# kind: PersistentVolumeClaim
-# metadata:
-#   name: traefik
-#   namespace: traefik
-# spec:
-#   accessModes:
-#     - ReadWriteOnce
-#   resources:
-#     requests:
-#       storage: 1Gi
-#   storageClassName: managed-csi
-# ---
-# apiVersion: v1
-# kind: Pod
-# metadata:
-#   name: fix-ssl-certs-permissions
-#   namespace: traefik
-# spec:
-#   restartPolicy: Never
-#   securityContext:
-#     runAsUser: 0
-#   containers:
-#     - name: fix-perms
-#       image: busybox
-#       command:
-#         [
-#           "sh",
-#           "-c",
-#           "mkdir -p /ssl-certs && chown -R 65532:65532 /ssl-certs && chmod -R 700 /ssl-certs",
-#         ]
-#       volumeMounts:
-#         - name: traefik
-#           mountPath: /ssl-certs
-#   volumes:
-#     - name: traefik
-#       persistentVolumeClaim:
-#         claimName: traefik
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: traefik-pvc
+  namespace: traefik
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: managed-csi
+  
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init-traefik-volume
+  namespace: traefik
+spec:
+  containers:
+    - name: permission-setter
+      image: busybox:latest
+      command:
+        - sh
+        - "-c"
+        - "touch /data/acme.json && chmod 600 /data/acme.json"
+      volumeMounts:
+        - name: traefik-data-volume
+          mountPath: /data
+  volumes:
+    - name: traefik-data-volume
+      persistentVolumeClaim:
+        claimName: traefik-pvc
+  restartPolicy: Never

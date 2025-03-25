@@ -39,15 +39,6 @@ chart:
         runAsGroup: 65532
         runAsNonRoot: true
         fsGroupChangePolicy: "Always"
-      initContainers:
-        - name: volume-permissions
-          image: busybox:latest
-          command: ["sh", "-c", "touch /data/acme.json; chmod -Rv 600 /data/*"]
-          securityContext:
-            runAsUser: 0
-          volumeMounts:
-            - name: data
-              mountPath: /data
     logs:
       general:
         level: "DEBUG"
@@ -56,12 +47,11 @@ chart:
         enabled: false
     persistence:
       enabled: true
-      name: data
-      type: pvc
+      existingClaim: traefik-pvc
       accessMode: ReadWriteOnce
       size: 1Gi
-      storageClass: managed-csi
       path: /data
+
     ingressClass:
       enabled: true
       isDefaultClass: true
