@@ -42,7 +42,7 @@ chart:
       initContainers:
         - name: volume-permissions
           image: busybox:latest
-          command: ["sh", "-c", "touch /data/acme.json; chmod -v 600 /data/acme.json"]
+          command: ["sh", "-c", "touch /data/acme.json; chmod -Rv 600 /data/*"]
           volumeMounts:
             - name: data
               mountPath: /data
