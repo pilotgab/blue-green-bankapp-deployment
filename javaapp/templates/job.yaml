@@ -1,27 +1,25 @@
-apiVersion: batch/v1
-kind: Job
+apiVersion: v1
+kind: Pod
 metadata:
   name: fix-ssl-certs-permissions
   namespace: traefik
 spec:
-  template:
-    spec:
-      restartPolicy: OnFailure
-      securityContext:
-        runAsUser: 0 # Run as root to fix permissions
-      containers:
-        - name: fix-perms
-          image: busybox
-          command:
-            [
-              "sh",
-              "-c",
-              "chown -R 65532:65532 /ssl-certs && chmod -R 700 /ssl-certs",
-            ]
-          volumeMounts:
-            - name: ssl-certs
-              mountPath: /ssl-certs
-      volumes:
+  restartPolicy: Never
+  securityContext:
+    runAsUser: 0
+  containers:
+    - name: fix-perms
+      image: busybox
+      command:
+        [
+          "sh",
+          "-c",
+          "mkdir -p /ssl-certs && chown -R 65532:65532 /ssl-certs && chmod -R 700 /ssl-certs",
+        ]
+      volumeMounts:
         - name: ssl-certs
-          persistentVolumeClaim:
-            claimName: ssl-certs
+          mountPath: /ssl-certs
+  volumes:
+    - name: ssl-certs
+      persistentVolumeClaim:
+        claimName: ssl-certs
