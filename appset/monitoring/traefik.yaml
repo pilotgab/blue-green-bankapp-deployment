@@ -11,8 +11,8 @@ chart:
       - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
       - --certificatesresolvers.cloudflare.acme.email=gabidachaba@gmail.com
       - --certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53
-      - --certificatesresolvers.cloudflare.acme.dnschallenge.delaybeforecheck=0
-      - --certificatesresolvers.cloudflare.acme.storage=/ssl-certs/acme-cloudflare.json
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.delaybeforecheck=5
+      - --certificatesresolvers.cloudflare.acme.storage=/data/acme.json
       - --certificatesresolvers.cloudflare.acme.caServer=https://acme-v02.api.letsencrypt.org/directory
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
@@ -40,15 +40,12 @@ chart:
         runAsNonRoot: true
         fsGroupChangePolicy: "Always"
       initContainers:
-        - name: fix-permissions
-          image: busybox
-          command:
-            - sh
-            - -c
-            - "mkdir -p /ssl-certs && chown -R 65532:65532 /ssl-certs && chmod -R 700 /ssl-certs"
+        - name: volume-permissions
+          image: busybox:latest
+          command: ["sh", "-c", "touch /data/acme.json; chmod -v 600 /data/acme.json"]
           volumeMounts:
-            - name: ssl-certs
-              mountPath: /ssl-certs
+            - name: data
+              mountPath: /data
     logs:
       general:
         level: "DEBUG"
@@ -57,12 +54,12 @@ chart:
         enabled: false
     persistence:
       enabled: true
-      name: ssl-certs
+      name: data
       type: pvc
       accessMode: ReadWriteOnce
       size: 1Gi
       storageClass: managed-csi
-      path: /ssl-certs
+      path: /data
     ingressClass:
       enabled: true
       isDefaultClass: true
