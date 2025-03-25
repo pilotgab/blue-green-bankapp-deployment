@@ -11,26 +11,26 @@ spec:
       storage: 1Gi
   storageClassName: managed-csi
 ---
-# apiVersion: v1
-# kind: Pod
-# metadata:
-#   name: init-traefik-volume
-#   namespace: traefik
-# spec:
-#   containers:
-#     - name: permission-setter
-#       image: busybox:latest
-#       command:
-#         - sh
-#         - "-c"
-#         - "touch /data/acme.json && chown 65532:65532 /data/acme.json && chmod 600 /data/acme.json"
-#       volumeMounts:
-#         - name: traefik-data-volume
-#           mountPath: /data
-#       securityContext:
-#         runAsUser: 0
-#   volumes:
-#     - name: traefik-data-volume
-#       persistentVolumeClaim:
-#         claimName: traefik-pvc
-#   restartPolicy: Never
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init-traefik-volume
+  namespace: traefik
+spec:
+  containers:
+    - name: permission-setter
+      image: busybox:latest
+      command:
+        - sh
+        - "-c"
+        - "touch /data/acme.json && chown 65532:65532 /data/acme.json && chmod 600 /data/acme.json"
+      volumeMounts:
+        - name: traefik-data-volume
+          mountPath: /data
+      securityContext:
+        runAsUser: 0
+  volumes:
+    - name: traefik-data-volume
+      persistentVolumeClaim:
+        claimName: traefik-pvc
+  restartPolicy: Never
