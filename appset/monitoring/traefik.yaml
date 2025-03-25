@@ -41,7 +41,7 @@ chart:
         fsGroupChangePolicy: "Always"
     logs:
       general:
-        level: "DEBUG"
+        level: "TRACE"
     ingressRoute:
       dashboard:
         enabled: false
