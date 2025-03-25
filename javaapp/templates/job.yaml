@@ -1,24 +1,22 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: traefik-init-pvc
+  name: fix-ssl-certs-permissions
   namespace: traefik
 spec:
   template:
     spec:
       restartPolicy: OnFailure
       securityContext:
-        runAsUser: 65532
-        runAsGroup: 65532
-        fsGroup: 65532
+        runAsUser: 0 # Run as root to fix permissions
       containers:
-        - name: init
+        - name: fix-perms
           image: busybox
           command:
             [
               "sh",
               "-c",
-              "mkdir -p /ssl-certs && chown -R 65532:65532 /ssl-certs && chmod -R 700 /ssl-certs",
+              "chown -R 65532:65532 /ssl-certs && chmod -R 700 /ssl-certs",
             ]
           volumeMounts:
             - name: ssl-certs
