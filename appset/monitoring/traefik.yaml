@@ -81,3 +81,6 @@ chart:
         - port: 443
           targetPort: 8443
           name: websecure
+      selector:
+      app.kubernetes.io/instance: traefik
+      app.kubernetes.io/name: traefik
