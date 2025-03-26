@@ -17,12 +17,15 @@ chart:
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
       - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
+      - "--entrypoints.web.http.redirections.entrypoint.excludedroutes=ping"
       - "--entrypoints.web.address=:8000"
       - "--entrypoints.websecure.address=:8443"
       - "--entrypoints.websecure.http.tls.certresolver=cloudflare"
       - "--providers.kubernetesingress.ingressclass=traefik"
       - "--ping"
       - "--ping.entrypoint=web"
+      - - "--ping.entrypoint=web"
+      - "--api.dashboard=true"
     env:
       - name: CF_API_EMAIL
         valueFrom:
@@ -46,7 +49,7 @@ chart:
         level: "TRACE"
     ingressRoute:
       dashboard:
-        enabled: false
+        enabled: true
     persistence:
       enabled: true
       existingClaim: traefik-pvc
@@ -79,5 +82,5 @@ chart:
           targetPort: 8443
           name: websecure
       selector:
-      app.kubernetes.io/instance: traefik-traefik
-      app.kubernetes.io/name: traefik
+        app.kubernetes.io/instance: traefik-traefik
+        app.kubernetes.io/name: traefik
