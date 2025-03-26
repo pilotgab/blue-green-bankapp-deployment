@@ -14,8 +14,16 @@ spec:
       labels:
         app: apache2
     spec:
+      securityContext:
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
       containers:
         - name: apache2
+          securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
           image: httpd:latest
           ports:
             - containerPort: 80
@@ -79,11 +87,18 @@ data:
   httpd.conf: |
     # Basic Apache configuration
     ServerRoot "/usr/local/apache2"
+    ServerName localhost
     Listen 80
+
+    # Load necessary modules
     LoadModule mpm_event_module modules/mod_mpm_event.so
+    LoadModule unixd_module modules/mod_unixd.so
     LoadModule authz_core_module modules/mod_authz_core.so
     LoadModule dir_module modules/mod_dir.so
     LoadModule mime_module modules/mod_mime.so
+
+    User daemon
+    Group daemon
 
     <Directory "/usr/local/apache2/htdocs">
         Options Indexes FollowSymLinks
