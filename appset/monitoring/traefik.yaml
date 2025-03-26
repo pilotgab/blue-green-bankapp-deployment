@@ -21,6 +21,7 @@ chart:
       - "--entrypoints.websecure.address=:8443"
       - "--entrypoints.websecure.http.tls.certresolver=cloudflare"
       - "--providers.kubernetesingress.ingressclass=traefik"
+      - "--ping"
     env:
       - name: CF_API_EMAIL
         valueFrom:
@@ -68,6 +69,7 @@ chart:
       annotations:
         service.beta.kubernetes.io/azure-load-balancer-resource-group: "stage-pilotgab-rg-nrg"
         service.beta.kubernetes.io/azure-load-balancer-internal: "false"
+        service.beta.kubernetes.io/azure-load-balancer-health-probe-request-path: /ping
       ports:
         - port: 80
           targetPort: 8000
