@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: tomcat
-          image: tomcat:10.1
+          image: captaingab/chrispyimg
           ports:
             - containerPort: 8080
 ---
