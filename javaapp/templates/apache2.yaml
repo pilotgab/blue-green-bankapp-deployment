@@ -1,116 +1,59 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: apache2-deployment
+  name: tomcat-deployment
   labels:
-    app: apache2
+    app: tomcat
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: apache2
+      app: tomcat
   template:
     metadata:
       labels:
-        app: apache2
+        app: tomcat
     spec:
-      securityContext:
-        runAsUser: 1001
-        runAsGroup: 1001
-        fsGroup: 1001
       containers:
-        - name: apache2
-          securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop: ["ALL"]
-          image: httpd:latest
+        - name: tomcat
+          image: tomcat:10.1
           ports:
-            - containerPort: 80
-          resources:
-            requests:
-              cpu: "100m"
-              memory: "128Mi"
-            limits:
-              cpu: "500m"
-              memory: "512Mi"
-          volumeMounts:
-            - name: apache-config
-              mountPath: /usr/local/apache2/conf/httpd.conf
-              subPath: httpd.conf
-      volumes:
-        - name: apache-config
-          configMap:
-            name: apache-config
+            - containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: apache2-service
+  name: tomcat-service
+  namespace: apps
+  labels:
+    app: tomcat
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
-    app: apache2
+    app: tomcat
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 80
+      targetPort: 8080
 
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: apache2-ingress
+  name: tomcat-ingress
   namespace: apps
   labels:
-    name: apache2-ingress
+    name: tomcat-ingress
 spec:
   ingressClassName: traefik
   rules:
-    - host: apache2.gabapp.tech
+    - host: tomcat.gabapp.tech
       http:
         paths:
           - pathType: Prefix
             path: "/"
             backend:
               service:
-                name: apache2-service
+                name: tomcat-service
                 port:
                   number: 80
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: apache-config
-data:
-  httpd.conf: |
-    # Basic Apache configuration
-    ServerRoot "/usr/local/apache2"
-    ServerName localhost
-    Listen 80
-
-    # Load necessary modules
-    LoadModule mpm_event_module modules/mod_mpm_event.so
-    LoadModule unixd_module modules/mod_unixd.so
-    LoadModule authz_core_module modules/mod_authz_core.so
-    LoadModule dir_module modules/mod_dir.so
-    LoadModule mime_module modules/mod_mime.so
-
-    User daemon
-    Group daemon
-
-    <Directory "/usr/local/apache2/htdocs">
-        Options Indexes FollowSymLinks
-        AllowOverride None
-        Require all granted
-    </Directory>
-
-    DocumentRoot "/usr/local/apache2/htdocs"
-
-    <Files ".ht*">
-        Require all denied
-    </Files>
-
-    ErrorLog /proc/self/fd/2
-    LogLevel warn
