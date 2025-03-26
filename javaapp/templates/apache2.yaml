@@ -1,57 +1,52 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tomcat-deployment
+  name: simple-webapp
   labels:
-    app: tomcat
+    app: simple-webapp
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: tomcat
+      app: simple-webapp
   template:
     metadata:
       labels:
-        app: tomcat
+        app: simple-webapp
     spec:
       containers:
-        - name: tomcat
-          image: captaingab/chrispyimg
+        - name: nginx
+          image: nginx:latest
           ports:
-            - containerPort: 8080
+            - containerPort: 80
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: tomcat-service
-  namespace: apps
+  name: simple-webapp-service
 spec:
-  type: ClusterIP
   selector:
-    app: tomcat
+    app: simple-webapp
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 8080
-
+      targetPort: 80
+  type: ClusterIP
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: tomcat-ingress
-  namespace: apps
-  labels:
-    name: tomcat-ingress
+  name: simple-webapp-ingress
 spec:
   ingressClassName: traefik
   rules:
-    - host: tomcat.gabapp.tech
+    - host: ingnix.gabapp.tech
       http:
         paths:
-          - pathType: Prefix
-            path: /
+          - path: /
+            pathType: Prefix
             backend:
               service:
-                name: tomcat-service
+                name: simple-webapp-service
                 port:
                   number: 80
