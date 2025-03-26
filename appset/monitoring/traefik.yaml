@@ -21,7 +21,7 @@ chart:
       - "--entrypoints.websecure.address=:8443"
       - "--entrypoints.websecure.http.tls.certresolver=cloudflare"
       - "--providers.kubernetesingress.ingressclass=traefik"
-      - "--api.dashboard="false"
+      - "--api.dashboard=false"
     env:
       - name: CF_API_EMAIL
         valueFrom:
