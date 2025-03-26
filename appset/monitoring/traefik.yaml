@@ -7,10 +7,6 @@ chart:
   repoURL: https://traefik.github.io/charts
   targetRevision: v34.4.1
   values: |
-    commonLabels:
-      app.kubernetes.io/instance: traefik
-      app.kubernetes.io/name: traefik
-
     additionalArguments:
       - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
       - --certificatesresolvers.cloudflare.acme.email=gabidachaba@gmail.com
