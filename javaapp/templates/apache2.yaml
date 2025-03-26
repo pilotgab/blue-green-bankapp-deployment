@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache2-deployment
+  labels:
+    app: apache2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apache2
+  template:
+    metadata:
+      labels:
+        app: apache2
+    spec:
+      containers:
+        - name: apache2
+          image: httpd:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          volumeMounts:
+            - name: apache-config
+              mountPath: /usr/local/apache2/conf/httpd.conf
+              subPath: httpd.conf
+      volumes:
+        - name: apache-config
+          configMap:
+            name: apache-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apache2-service
+spec:
+  type: ClusterIP
+  selector:
+    app: apache2
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: apache2-ingress
+  namespace: apps
+  labels:
+    name: apache2-ingress
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: apache2.gabapp.tech
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: apache2-service
+                port:
+                  number: 80
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apache-config
+data:
+  httpd.conf: |
+    # Basic Apache configuration
+    ServerRoot "/usr/local/apache2"
+    Listen 80
+    LoadModule mpm_event_module modules/mod_mpm_event.so
+    LoadModule authz_core_module modules/mod_authz_core.so
+    LoadModule dir_module modules/mod_dir.so
+    LoadModule mime_module modules/mod_mime.so
+
+    <Directory "/usr/local/apache2/htdocs">
+        Options Indexes FollowSymLinks
+        AllowOverride None
+        Require all granted
+    </Directory>
+
+    DocumentRoot "/usr/local/apache2/htdocs"
+
+    <Files ".ht*">
+        Require all denied
+    </Files>
+
+    ErrorLog /proc/self/fd/2
+    LogLevel warn
