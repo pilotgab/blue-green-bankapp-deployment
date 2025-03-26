@@ -26,7 +26,7 @@ metadata:
   name: tomcat-service
   namespace: apps
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: tomcat
   ports:
