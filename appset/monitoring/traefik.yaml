@@ -21,7 +21,7 @@ chart:
       - "--entrypoints.websecure.address=:8443"
       - "--entrypoints.websecure.http.tls.certresolver=cloudflare"
       - "--providers.kubernetesingress.ingressclass=traefik"
-      - "--api.dashboard=false"
+      - "--api.dashboard=true"
     env:
       - name: CF_API_EMAIL
         valueFrom:
@@ -45,7 +45,7 @@ chart:
         level: "TRACE"
     ingressRoute:
       dashboard:
-        enabled: false
+        enabled: true
     persistence:
       enabled: true
       existingClaim: traefik-pvc
@@ -69,7 +69,7 @@ chart:
       annotations:
         service.beta.kubernetes.io/azure-load-balancer-resource-group: "stage-pilotgab-rg-nrg"
         service.beta.kubernetes.io/azure-load-balancer-internal: "false"
-        service.beta.kubernetes.io/azure-load-balancer-health-probe-request-path: /
+        service.beta.kubernetes.io/azure-load-balancer-health-probe-request-path: /healtz
       ports:
         - port: 80
           targetPort: 8000
