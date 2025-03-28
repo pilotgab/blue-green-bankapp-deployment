@@ -89,10 +89,10 @@ chart:
       annotations:
         service.beta.kubernetes.io/azure-load-balancer-resource-group: "stage-pilotgab-rg-nrg"
         service.beta.kubernetes.io/azure-load-balancer-internal: "false"
-        service.beta.kubernetes.io/azure-load-balancer-health-probe-request-path: /ping
-        service.beta.kubernetes.io/azure-load-balancer-health-probe-interval: "10"
-        service.beta.kubernetes.io/azure-load-balancer-health-probe-number-of-probes: "2"
-        service.beta.kubernetes.io/azure-load-balancer-health-probe-port: "8000"
+        # service.beta.kubernetes.io/azure-load-balancer-health-probe-request-path: /ping
+        # service.beta.kubernetes.io/azure-load-balancer-health-probe-interval: "10"
+        # service.beta.kubernetes.io/azure-load-balancer-health-probe-number-of-probes: "2"
+        # service.beta.kubernetes.io/azure-load-balancer-health-probe-port: "8000"
       ports:
         - port: 80
           targetPort: 8000
