@@ -20,7 +20,7 @@ deployment:
     version: green
   image:
     repository: javaapplicationacr.azurecr.io/java-app
-    tag: "0c8f1e5"
+    tag: "c3db07e"
   containerPort: 8080
   env:
     datasourceUrl: jdbc:mysql://mysql-service:3306/bankappdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
