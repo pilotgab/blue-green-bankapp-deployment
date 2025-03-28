@@ -17,8 +17,10 @@ chart:
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
       - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
-      - "--entrypoints.web.address=:8000"
-      - "--entrypoints.websecure.address=:8443"
+      - "--entrypoints.web.address=:8000/tcp"
+      - "--entrypoints.websecure.address=:8443/tcp"
+      # - "--entrypoints.metrics.address=:9100/tcp"
+      # - "--entrypoints.traefik.address=:8080/tcp"
       - "--entrypoints.websecure.http.tls.certresolver=cloudflare"
       - "--providers.kubernetesingress.ingressclass=traefik"
       - "--api.dashboard=false"
@@ -42,28 +44,21 @@ chart:
         runAsGroup: 65532
         runAsNonRoot: true
         fsGroupChangePolicy: "Always"
-      # # Health check configuration
-      # livenessProbe:
-      #   enabled: true
-      #   httpGet:
-      #     path: /ping
-      #     port: 8000
-      #   initialDelaySeconds: 30
-      #   periodSeconds: 10
-      #   timeoutSeconds: 5
-      #   failureThreshold: 3
-      # readinessProbe:
-      #   enabled: true
-      #   httpGet:
-      #     path: /ping
-      #     port: 8000
-      #   initialDelaySeconds: 15
-      #   periodSeconds: 5
-      #   timeoutSeconds: 3
-      #   failureThreshold: 1
+      livenessProbe:
+        httpGet:
+          path: /ping
+          port: 8000
+        initialDelaySeconds: 30
+        periodSeconds: 10
+      readinessProbe:
+        httpGet:
+          path: /ping
+          port: 8000
+        initialDelaySeconds: 15
+        periodSeconds: 5
     logs:
       general:
-        level: "TRACE"
+        level: "DEBUG"
     ingressRoute:
       dashboard:
         enabled: false
