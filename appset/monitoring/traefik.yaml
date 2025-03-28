@@ -22,6 +22,8 @@ chart:
       - "--entrypoints.websecure.http.tls.certresolver=cloudflare"
       - "--providers.kubernetesingress.ingressclass=traefik"
       - "--api.dashboard=true"
+      - "--ping"
+      - "--ping.entrypoint=web"
     env:
       - name: CF_API_EMAIL
         valueFrom:
@@ -40,6 +42,23 @@ chart:
         runAsGroup: 65532
         runAsNonRoot: true
         fsGroupChangePolicy: "Always"
+      # Health check configuration
+      livenessProbe:
+        httpGet:
+          path: /ping
+          port: 8000
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 3
+      readinessProbe:
+        httpGet:
+          path: /ping
+          port: 8000
+        initialDelaySeconds: 15
+        periodSeconds: 5
+        timeoutSeconds: 3
+        failureThreshold: 1
     logs:
       general:
         level: "TRACE"
@@ -52,7 +71,6 @@ chart:
       accessMode: ReadWriteOnce
       size: 1Gi
       path: /data
-
     ingressClass:
       enabled: true
       isDefaultClass: true
@@ -69,11 +87,15 @@ chart:
       annotations:
         service.beta.kubernetes.io/azure-load-balancer-resource-group: "stage-pilotgab-rg-nrg"
         service.beta.kubernetes.io/azure-load-balancer-internal: "false"
-        service.beta.kubernetes.io/azure-load-balancer-health-probe-request-path: /healtz
+        service.beta.kubernetes.io/azure-load-balancer-health-probe-request-path: /ping
+        service.beta.kubernetes.io/azure-load-balancer-health-probe-interval: "10"
+        service.beta.kubernetes.io/azure-load-balancer-health-probe-number-of-probes: "2"
+        service.beta.kubernetes.io/azure-load-balancer-health-probe-port: "8000"
       ports:
         - port: 80
           targetPort: 8000
           name: web
+          appProtocol: http
         - port: 443
           targetPort: 8443
           name: websecure
