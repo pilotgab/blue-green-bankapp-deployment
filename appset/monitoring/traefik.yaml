@@ -44,6 +44,7 @@ chart:
         fsGroupChangePolicy: "Always"
       # Health check configuration
       livenessProbe:
+        enabled: false
         httpGet:
           path: /ping
           port: 8000
@@ -52,6 +53,7 @@ chart:
         timeoutSeconds: 5
         failureThreshold: 3
       readinessProbe:
+        enabled: false
         httpGet:
           path: /ping
           port: 8000
