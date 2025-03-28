@@ -20,9 +20,9 @@ chart:
       - "--entrypoints.web.address=:8000/tcp"
       - "--entrypoints.websecure.address=:8443/tcp"
       # - "--entrypoints.metrics.address=:9100/tcp"
-      # - "--entrypoints.traefik.address=:8080/tcp"
       - "--entrypoints.websecure.http.tls.certresolver=cloudflare"
       - "--providers.kubernetesingress.ingressclass=traefik"
+      - "--entrypoints.traefik.address=:8080/tcp"
       - "--api.dashboard=false"
       - "--ping"
       - "--ping.entrypoint=web"
@@ -51,12 +51,14 @@ chart:
         initialDelaySeconds: 10
         periodSeconds: 5
         failureThreshold: 3
+        timeoutSeconds: 3
       readinessProbe:
         httpGet:
           path: /ping
           port: web
         initialDelaySeconds: 5
         periodSeconds: 5
+        timeoutSeconds: 3
     logs:
       general:
         level: "DEBUG"
