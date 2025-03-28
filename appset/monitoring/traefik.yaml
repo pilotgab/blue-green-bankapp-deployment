@@ -49,16 +49,17 @@ chart:
           path: /ping
           port: web
         initialDelaySeconds: 10
-        periodSeconds: 5
-        failureThreshold: 3
-        timeoutSeconds: 3
+        periodSeconds: 15
+        failureThreshold: 5
+        timeoutSeconds: 5
       readinessProbe:
         httpGet:
           path: /ping
           port: web
-        initialDelaySeconds: 5
-        periodSeconds: 5
-        timeoutSeconds: 3
+        failureThreshold: 3
+        initialDelaySeconds: 10
+        periodSeconds: 15
+        timeoutSeconds: 5
     logs:
       general:
         level: "DEBUG"
@@ -76,8 +77,8 @@ chart:
       isDefaultClass: true
     resources:
       requests:
-        cpu: 250m
-        memory: 256Mi
+        cpu: "500m"
+        memory: 512Mi
       limits:
         cpu: "500m"
         memory: 512Mi
