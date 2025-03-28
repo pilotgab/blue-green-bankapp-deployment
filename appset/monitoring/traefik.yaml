@@ -21,7 +21,7 @@ chart:
       - "--entrypoints.websecure.address=:8443"
       - "--entrypoints.websecure.http.tls.certresolver=cloudflare"
       - "--providers.kubernetesingress.ingressclass=traefik"
-      - "--api.dashboard=true"
+      - "--api.dashboard=false"
       # - "--ping"
       # - "--ping.entrypoint=web"
     env:
@@ -66,7 +66,7 @@ chart:
         level: "TRACE"
     ingressRoute:
       dashboard:
-        enabled: true
+        enabled: false
     persistence:
       enabled: true
       existingClaim: traefik-pvc
